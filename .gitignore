@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.vercel/
+data/
+supabase/seed.sql
+*.zip
+.local-access.json
+.deployment*

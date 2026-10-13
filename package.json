@@ -1,0 +1,1 @@
+{"name":"euroalpaca-inventario","private":true,"version":"1.0.0","type":"module","engines":{"node":">=22"},"scripts":{"dev":"node scripts/server.mjs","build":"node scripts/build.mjs","preview":"node scripts/server.mjs --production","test":"node --test tests/*.test.mjs","prepare:inventory":"node scripts/prepare-inventory.mjs"},"devDependencies":{"@electric-sql/pglite":"^0.5.9"}}
