@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {displayYarnTitle} from '../src/yarn.mjs';
+test('respeta el formato d/m del Excel y conserva títulos textiles válidos',()=>{assert.equal(displayYarnTitle('2026-02-18 00:00:00'),'18/2');assert.equal(displayYarnTitle('46071.0'),'18/2');assert.equal(displayYarnTitle('2/28'),'2/28');assert.equal(displayYarnTitle('2/40'),'2/40');assert.equal(displayYarnTitle(''),'');});

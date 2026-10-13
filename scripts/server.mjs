@@ -1,4 +1,5 @@
 import http from 'node:http';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
+import {publicCatalog} from '../src/catalog.mjs';
 const prod=process.argv.includes('--production'),base=path.resolve(prod?'dist':'.');
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml'};
 const credentials=!prod&&fs.existsSync('.local-access.json')?JSON.parse(fs.readFileSync('.local-access.json','utf8')):null;
@@ -7,6 +8,7 @@ const send=(res,code,data)=>{res.writeHead(code,{'Content-Type':'application/jso
 const server=http.createServer(async(req,res)=>{
  try{
  const p=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+ if(p==='/api/catalog'&&!prod&&req.method==='GET')return send(res,200,{models:publicCatalog(JSON.parse(fs.readFileSync('data/inventory.json','utf8')))});
  if(p.startsWith('/local/')&&!prod&&credentials){
   const token=req.headers.cookie?.match(/(?:^|;\s*)ea_local=([^;]+)/)?.[1];const expires=sessions.get(token);const valid=expires>Date.now();
   if(req.method==='POST'){
@@ -24,9 +26,9 @@ const server=http.createServer(async(req,res)=>{
   return send(res,404,{error:'No encontrado'});
  }
  if(p==='/config.js'&&!prod){res.setHeader('Content-Type','text/javascript');res.setHeader('Cache-Control','no-store');return res.end('window.EURO_CONFIG='+JSON.stringify({url:'',key:'',local:!!credentials})+';');}
- if(!prod&&!/^\/(src\/|assets\/|$|index.html$)/.test(p)){res.writeHead(404);return res.end('No encontrado');}
+ if(!prod&&!/^\/(src\/|assets\/|$|index.html$|catalogo.html$)/.test(p)){res.writeHead(404);return res.end('No encontrado');}
  const relative=p==='/'?'/index.html':p;
- let target=path.resolve(base,'.'+relative);if(!prod&&p.startsWith('/assets/'))target=path.resolve(base,'public','.'+p);
+ let target=path.resolve(base,'.'+relative);if(!prod&&(p.startsWith('/assets/')||p==='/catalogo.html'))target=path.resolve(base,'public','.'+p);
  if(!target.startsWith(base+path.sep)||!fs.existsSync(target)||!fs.statSync(target).isFile()){res.writeHead(404);return res.end('No encontrado');}
  res.setHeader('Content-Type',mime[path.extname(target)]||'application/octet-stream');res.setHeader('X-Content-Type-Options','nosniff');fs.createReadStream(target).pipe(res);
  }catch{send(res,400,{error:'Solicitud inválida'});}
