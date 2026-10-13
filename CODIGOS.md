@@ -1,15 +1,14 @@
 # Leyenda de códigos EUROALPACA
 
-Ejemplo: **BA01MOM**
+Ejemplo: **PE01MO**
 
 | Parte | Significado |
 | --- | --- |
-| BA | Material: Baby Alpaca |
+| PE | Diseño: petinets |
 | 01 | Número del modelo |
 | MO | Color: mostaza |
-| M | Talla M |
 
-Sin guiones. El SKU comercial tiene 7 caracteres (8 para tallas como XS y XL). U = talla única; ST = talla sin registrar. El registro interno añade 3 números para distinguir filas originales o registros repetidos; el código comercial permanece corto. Los códigos de color del proveedor se conservan separados en la ficha.
+Sin guiones. El código comercial tiene 6 caracteres y solo identifica diseño, modelo y color. S, M, L y XL comparten el mismo código. La talla y el material se guardan por separado, con sus propias existencias. El registro interno añade 3 números para distinguir filas originales o registros repetidos; el código comercial permanece corto. Los códigos de color del proveedor se conservan separados en la ficha.
 
 ## Materiales
 
@@ -64,12 +63,12 @@ Sin guiones. El SKU comercial tiene 7 caracteres (8 para tallas como XS y XL). U
 | 02 | AJ02 | Bufanda ajedrez 4×4 |
 | 03 | TR03 | Vestido trenzas |
 | 04 | MA04 | Vestido Majestic |
-| 05 | RA05 | Vestido raport · 2 colores |
-| 06 | RA06 | Vestido raport · 4 colores |
+| 05 | RA05 | Vestido raport - 2 colores |
+| 06 | RA06 | Vestido raport - 4 colores |
 | 07 | CR07 | Vestido crochet |
 | 08 | PE08 | Vestido petinets |
-| 09 | CR09 | Falda crochet |
-| 10 | CR10 | Blusa crochet |
+| 09 | CR09 | Falda con detalles a crochet |
+| 10 | CR10 | Blusa con detalles a crochet |
 | 11 | AS11 | Asimetrico |
 | 12 | AN12 | Andrea |
 | 13 | MA13 | Majestic |
