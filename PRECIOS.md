@@ -4,6 +4,8 @@ Se consultaron el catálogo público, su endpoint `/api/catalog` y su interfaz e
 
 La implementación permite guardar un precio de venta y moneda por registro de variante, desde **Editar ficha**. Se muestra en inventario, ficha y exportación CSV. El campo vacío aparece como **Por confirmar**. Solo la administradora puede editarlo y cada cambio queda en la auditoría, con fecha de actualización.
 
+El apartado **Precios** del menú reúne los importes, búsqueda por prenda, código o color y filtros para precios confirmados o pendientes. La administradora puede pulsar **Agregar** o **Editar** y guardar directamente el precio y la moneda.
+
 No existe sincronización automática de precios con la web. Hace falta una lista de precios o un enlace que publique los importes para realizar la importación y verificar cada correspondencia.
 
 ## Base de datos
