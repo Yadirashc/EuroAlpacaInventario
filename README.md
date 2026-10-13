@@ -2,7 +2,7 @@
 
 Aplicación web para gestionar modelos, variantes, fichas técnicas, existencias, movimientos y permisos. Diseño alineado con el catálogo de euroalpaca.com. Backend Supabase Auth/PostgreSQL/Realtime y despliegue Vercel. HTML/CSS/JavaScript modular, sin dependencias de runtime.
 
-Consulta [LEEME.md](LEEME.md) para configurar Supabase y Vercel.
+Web publicada: https://euroalpaca-inventario.vercel.app. Consulta [DEPLOYMENT.md](DEPLOYMENT.md) para ver el estado, validaciones e integración con GitHub; [LEEME.md](LEEME.md) explica la instalación en un proyecto nuevo.
 
 ```sh
 npm ci

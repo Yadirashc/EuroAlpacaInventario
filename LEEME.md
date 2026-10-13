@@ -4,6 +4,8 @@ Sistema web en español, adaptable a celular, con login, perfiles de administrad
 
 ## Desplegar en 5 pasos
 
+**Tu proyecto ya está desplegado y el inventario está cargado.** No repitas estos pasos sobre la base existente. Consulta `DEPLOYMENT.md`; estas instrucciones sirven para una instalación nueva.
+
 1. Crea un proyecto en **Supabase**. En **SQL Editor**, ejecuta `supabase/schema.sql` y después `supabase/seed.sql`.
 2. En **Authentication → Users → Add user**, crea tu cuenta y contraseña. Ejecuta `supabase/bootstrap-admin.sql` cambiando `CAMBIA-POR-TU-CORREO` por tu correo. Desactiva el registro público en Authentication: las cuentas las crearás tú desde la web.
 3. Sube el proyecto a un repositorio **privado** de GitHub. `.gitignore` excluye inventario, datos, archivos .env y dependencias. Conserva `data/` y `supabase/seed.sql` en tu equipo para importación y respaldo.
@@ -66,6 +68,6 @@ RLS y permisos por columna verifican roles en la base. Consulta no escribe; oper
 
 ## Tecnologías y referencias
 
-HTML, CSS, JavaScript modular, Node.js, funciones Vercel y Supabase Auth/PostgreSQL/Realtime. Sin dependencias de paquetes. Foto NINA desde tus archivos; Google Fonts con fuentes de sistema como respaldo.
+HTML, CSS, JavaScript modular, Node.js, funciones Vercel y Supabase Auth/PostgreSQL/Realtime. Sin dependencias de runtime; PGlite es una dependencia de desarrollo para probar PostgreSQL. Foto NINA desde tus archivos; Google Fonts con fuentes de sistema como respaldo.
 
 Referencias oficiales: [seguridad RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [Realtime](https://supabase.com/docs/guides/realtime/protocol), [build de Vercel](https://vercel.com/docs/builds/configure-a-build).
