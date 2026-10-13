@@ -6,6 +6,6 @@ La implementación permite guardar un precio de venta y moneda por registro de v
 
 No existe sincronización automática de precios con la web. Hace falta una lista de precios o un enlace que publique los importes para realizar la importación y verificar cada correspondencia.
 
-## Publicación pendiente
+## Base de datos
 
-El código está verificado localmente. Aplicar `supabase/prices.sql` a la base existente y después desplegar este commit en Vercel. `supabase/schema.sql` incluye la migración para instalaciones nuevas. No ejecutar todo el esquema sobre una base ya creada.
+La migración `supabase/prices.sql` está aplicada en la base de producción. Para otra base existente, aplicar ese archivo antes de desplegar el código. `supabase/schema.sql` incluye la migración para instalaciones nuevas. No ejecutar todo el esquema sobre una base ya creada.

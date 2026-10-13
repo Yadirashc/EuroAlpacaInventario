@@ -26,6 +26,8 @@ Hay 2 cantidades desconocidas. Las 396 unidades son la suma de cantidades conoci
 
 ## Uso y actualizaciones
 
+Los códigos comerciales identifican diseño, modelo y color, y son iguales para todas las tallas. Por ejemplo, `SU38BE` se conserva al pasar de S a M. Cada talla mantiene sus propias existencias. La ficha permite guardar un precio de venta y moneda; los importes todavía no confirmados permanecen vacíos. Consulta [CODIGOS.md](CODIGOS.md) y [PRECIOS.md](PRECIOS.md).
+
 Las credenciales de administradora se entregaron por separado; no se guardan en este repositorio. El registro público está desactivado. Las cuatro variables de Supabase ya se configuraron en Vercel; la clave privada solo está en el servidor.
 
 Esta versión se desplegó directamente desde el contenido del commit de GitHub. Falta instalar la integración oficial Vercel–GitHub para despliegues automáticos con cada push:
