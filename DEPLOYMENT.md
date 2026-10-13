@@ -1,4 +1,4 @@
-# Estado de EUROALPACA
+﻿# Estado de EUROALPACA
 
 Publicado y verificado el 13/10/2026.
 
@@ -18,11 +18,11 @@ Se importaron las tres hojas del Excel original de Google Drive. Se contrastaron
 | INFO DE ENVIOS | 78 | 182 |
 | Total | 226 | 396 |
 
-Coinciden los 11 modelos del catálogo web: Kinti, Munay, Sumaq, Illa, Qori, Killa, Suyay, Aruma, Kuyay, Ayni y Allin. Se ajustaron los colores del sistema a la paleta de la web pública.
+El Excel es la única fuente. Se comprobaron 4.506 campos originales y se añadió una vista por hoja con todos sus campos y modo de edición de cantidades para la administradora.
 
 Se verificaron login real de administradora, creación de operadora y consulta desde la API publicada, lectura de inventario, bloqueo de administración para ambos roles, rechazo de lectura anónima, bloqueo de modificación directa de stock, ajustes, dos salidas simultáneas y recepción real de eventos Realtime. Todas las cuentas y prendas de prueba se eliminaron. Las 226 filas originales quedaron intactas.
 
-Hay 2 cantidades desconocidas y 116 registros señalados para revisión por faltantes, posibles repeticiones o títulos del hilo convertidos a fechas en Excel. Las 396 unidades son suma de filas antes de resolver repeticiones, no un conteo físico certificado. Los 44 códigos se agrupan provisionalmente por nombre y tipo; no se fusionaron nombres parecidos.
+Hay 2 cantidades desconocidas. Las 396 unidades son la suma de cantidades conocidas. Hay 40 grupos de modelos: mayúsculas, minúsculas y espacios no crean modelos separados. Las 226 filas permanecen intactas. El título del hilo 18/2 sigue el formato original del XLSX.
 
 ## Uso y actualizaciones
 
@@ -34,4 +34,5 @@ Esta versión se desplegó directamente desde el contenido del commit de GitHub.
 2. Instala/autoriza Vercel para el repositorio `Yadirashc/EuroAlpacaInventario`.
 3. Vincula ese repositorio y selecciona `main` como rama de producción.
 
-El catálogo de www.euroalpaca.com no fue modificado. Para usar `inventario.euroalpaca.com`, añade ese dominio al proyecto y configura el DNS que Vercel indique. El inventario todavía no sincroniza cantidades con el catálogo público ni escribe cambios a Google Sheets.
+El inventario guarda los cambios en Supabase; no escribe automáticamente en Google Sheets. Instrucciones de edición: MODO_EDICION.md.
+

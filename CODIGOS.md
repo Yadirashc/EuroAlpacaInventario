@@ -86,12 +86,10 @@ Sin guiones. El SKU comercial tiene 7 caracteres (8 para tallas como XS y XL). U
 | 24 | AM24 | Ampi |
 | 25 | MI25 | Mi si |
 | 26 | AR26 | Aruma |
-| 27 | CU27 | Chompa · cuello camisero |
 | 28 | BA28 | Bufanda básica con flecos |
 | 29 | SU29 | Sumaq |
 | 30 | MU30 | Munay |
 | 31 | NI31 | Nina |
-| 32 | QO32 | Qori |
 | 33 | IL33 | Illa |
 | 34 | AL34 | Allin |
 | 35 | AY35 | Ayni |
@@ -102,5 +100,3 @@ Sin guiones. El SKU comercial tiene 7 caracteres (8 para tallas como XS y XL). U
 | 40 | WA40 | Wayra |
 | 41 | HA41 | Hanaq |
 | 42 | IL42 | Illari |
-| 43 | MU43 | Munay |
-| 44 | IL44 | Illa |

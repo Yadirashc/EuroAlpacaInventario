@@ -1,8 +1,8 @@
 # EUROALPACA · Gestión de inventario
 
-Aplicación web para gestionar modelos, variantes, fichas técnicas, existencias, movimientos y permisos. Diseño alineado con el catálogo de euroalpaca.com. Backend Supabase Auth/PostgreSQL/Realtime y despliegue Vercel. HTML/CSS/JavaScript modular, sin dependencias de runtime.
+Aplicación web para gestionar modelos, variantes, fichas técnicas, existencias, movimientos y permisos. Fuente de inventario: el Excel de Google Drive proporcionado por Yadira. Backend Supabase Auth/PostgreSQL/Realtime y despliegue Vercel. HTML/CSS/JavaScript modular, sin dependencias de runtime.
 
-Web publicada: https://euroalpaca-inventario.vercel.app. Consulta [DEPLOYMENT.md](DEPLOYMENT.md) para ver el estado, validaciones e integración con GitHub; [LEEME.md](LEEME.md) explica la instalación en un proyecto nuevo.
+Web publicada: https://euroalpaca-inventario.vercel.app. Consulta [MODO_EDICION.md](MODO_EDICION.md) para la vista fiel al Excel y edición de cantidades; [DEPLOYMENT.md](DEPLOYMENT.md) describe el despliegue y [LEEME.md](LEEME.md) la instalación en un proyecto nuevo.
 
 ```sh
 npm ci

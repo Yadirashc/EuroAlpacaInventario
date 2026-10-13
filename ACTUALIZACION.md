@@ -1,25 +1,13 @@
-# Limpieza, códigos y catálogo completo
+﻿# Actualización del inventario
 
-Los datos ya se actualizaron en Supabase. Las cantidades, IDs, movimientos y campos originales permanecen conservados. La presentación usa nombres y colores con mayúsculas uniformes, composiciones con separadores consistentes y títulos cortos en las tarjetas.
+El Excel de Google Drive es la única fuente de prendas y características. Se comprobaron 4.506 campos de 226 filas en sus tres hojas. Las cantidades conocidas suman 396 unidades; dos cantidades permanecen desconocidas.
 
-## Códigos cortos
+Los nombres equivalentes se agrupan sin distinguir mayúsculas, minúsculas ni espacios: hay 40 grupos de modelos. Se conservan todas las filas originales, sus IDs y sus características. Los nombres completos se mantienen y el título del hilo se muestra como 18/2 según el formato original del Excel.
 
-Ejemplo: `BA01MOM` = BA (Baby Alpaca) + 01 (modelo) + MO (mostaza) + M (talla). Sin guiones. Leyenda completa: [CODIGOS.md](CODIGOS.md) y sección **Leyenda de códigos** del sistema actualizado.
+Los códigos cortos no tienen guiones. Ejemplo: BA01MOM = Baby Alpaca + modelo 01 + mostaza + talla M. Consulta CODIGOS.md para la leyenda.
 
-El código comercial distingue material, modelo, color y talla. El código interno añade tres números para distinguir filas y conserva trazabilidad mediante los IDs y `audit_log`. Los códigos del proveedor se mantienen en sus campos originales.
+La vista Excel muestra las tres hojas y todos sus campos. La administradora puede activar Modo edición, modificar cantidades y guardar con un motivo. Los cambios se guardan en Supabase y generan movimientos de inventario. Consulta MODO_EDICION.md.
 
-## Título del hilo
+Web: https://euroalpaca-inventario.vercel.app
 
-Se comprobó el archivo XLSX original: numFmtId 164 usa `d/m` en todas las celdas que la importación interpretó como fechas. El valor serial `46071` se muestra en Excel como **18/2**. Se normalizó a ese texto, sin horas ni año. Los valores **2/28** y **2/40** no se cambiaron. Las celdas vacías no se rellenan con valores inventados.
-
-## Todas las prendas
-
-El catálogo nuevo en `/catalogo.html` incluye los **44 grupos de modelos** del inventario, en lugar de los 11 de la web pública actual. La ficha permite seleccionar material, color y talla: el SKU cambia con la combinación elegida. Usa nombres de colores del inventario, no «Tono 01». Las variantes sin stock comercial confirmado no se anuncian como disponibles.
-
-El endpoint `/api/catalog` publica únicamente características de las prendas. No devuelve cantidades exactas, proveedores, observaciones internas, ubicaciones ni los campos originales privados. Se actualiza desde Supabase con caché de 30 segundos.
-
-## Publicación pendiente
-
-El diseño nuevo se verificó localmente en Chrome, pero este entorno perdió su conexión al Chrome autenticado y no tiene credenciales de Vercel. Para publicarlo, conecta el repositorio en Vercel → proyecto `euroalpaca-inventario` → Settings → Git. Al desplegar `main`, las pantallas actualizadas y `/api/catalog` quedan disponibles.
-
-Para actualizar **www.euroalpaca.com**, hace falta acceso al proyecto de esa web. Sus datos actuales se sirven desde su propio `/api/catalog`; ese catálogo no está conectado todavía a este inventario. El nuevo endpoint y la vista completa están preparados para integrarlos. No se afirma que la web principal ya haya sido modificada.
+El sistema no escribe automáticamente en Google Sheets.

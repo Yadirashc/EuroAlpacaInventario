@@ -1,0 +1,11 @@
+import {normalize} from './domain.mjs';import {displayYarnTitle} from './yarn.mjs';
+export const sourceSheets=['INVENTARIO - TALLER','PRODUCCIÓN QURI','INFO DE ENVIOS'];
+export const sourceColumns={
+ 'INVENTARIO - TALLER':['INVENTARIO','PRENDA','NOMBRE','DESCRIPCION DE PRENDA','ESTATUS','MATERIAL','N. COMERCIAL','COMPOSICIÓN','CANT. - HEBRAS','TÍTULO','CÓDIGO','COLOR','C. DE COLOR','PROVEEDOR','ESTADO','CANTIDAD','TALLA','GÉNERO','PESO - PRENDAS','PESO -PRODUCCIÓN','OBSERVACIONES'],
+ 'PRODUCCIÓN QURI':['','INVENTARIO','PRENDA','NOMBRE','DESCRIPCION DE PRENDAS','ESTATUS','MATERIAL','N. COMERCIAL','COMPOSICIÓN','HEBRAS','TÍTULO','CÓDIGO','COLOR','C. DE COLOR','PROVEEDOR','ESTADO','CANTIDAD','TALLA','GÉNERO','OBSERVACIONES'],
+ 'INFO DE ENVIOS':['N° PRODUCCION','PRENDA','NOMBRE','DESCRIPCION DE PRENDAS','IMAGEN','ESTATUS','MATERIAL','N. COMERCIAL','COMPOSICIÓN','N° HEBRAS','TÍTULO','CÓDIGO','COLOR','C. DE COLOR','PROVEEDOR','ESTADO','CANTIDAD','TALLA','GÉNERO']
+};
+const fields={INVENTARIO:'inventory_type',PRENDA:'category',NOMBRE:'name','DESCRIPCION DE PRENDA':'description','DESCRIPCION DE PRENDAS':'description',ESTATUS:'status',MATERIAL:'material','N. COMERCIAL':'commercial_name',COMPOSICION:'composition','CANT. - HEBRAS':'threads',HEBRAS:'threads','N° HEBRAS':'threads',TITULO:'yarn_title',CODIGO:'material_code',COLOR:'color','C. DE COLOR':'color_code',PROVEEDOR:'supplier',ESTADO:'production_state',CANTIDAD:'quantity',TALLA:'size',GENERO:'gender','PESO - PRENDAS':'weight','PESO -PRODUCCION':'production_weight',OBSERVACIONES:'notes'};
+export function originalCell(r,column){const entry=Object.entries(r.source_snapshot||{}).find(([k])=>normalize(k)===normalize(column));return entry?.[1]??'';}
+export function excelCell(r,column){const key=normalize(column);if(key==='CANTIDAD')return r.quantity;if(key==='TITULO')return displayYarnTitle(r.yarn_title||originalCell(r,column));if(key==='NOMBRE'&&originalCell(r,column)==='')return '';const field=fields[key],value=field?r[field]??originalCell(r,column):originalCell(r,column);return (key===''||key==='N° PRODUCCION')&&/^\d+\.0+$/.test(String(value))?String(Number(value)):value;}
+export function excelRows(rows,sheet){return rows.filter(r=>r.source_sheet_name===sheet).sort((a,b)=>a.source_row-b.source_row);}

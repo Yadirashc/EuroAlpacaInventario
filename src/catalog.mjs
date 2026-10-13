@@ -1,6 +1,7 @@
 import {normalize} from './domain.mjs';
-export const publicModelNames=['Kinti','Munay','Sumaq','Illa','Qori','Killa','Suyay','Aruma','Kuyay','Ayni','Allin'];
 export const segment=s=>normalize(s).replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+export const modelKey=r=>categoryCode(r.category)+'|'+normalize(r.name).replace(/\s+/g,' ').trim();
+export function canonicalModelRows(rows){const canonical=new Map();for(const r of rows){const identity=modelIdentity(r),key=modelKey(r),n=Number(identity.code.match(/\d+$/)?.[0]||999);if(!canonical.has(key)||n<canonical.get(key).n)canonical.set(key,{...identity,n});}return rows.map(r=>{const model=canonical.get(modelKey(r));return {...r,model_code:model.code,sku:inventorySku({...r,model_code:model.code})};});}
 const shortNames={
  'EA-0001':['Bufanda petinets','BUF-PETINETS'], 'EA-0002':['Bufanda ajedrez 4×4','BUF-AJEDREZ4X4'],
  'EA-0003':['Vestido trenzas','VES-TRENZAS'],'EA-0004':['Vestido Majestic','VES-MAJESTIC'],
