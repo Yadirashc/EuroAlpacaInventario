@@ -25,7 +25,8 @@ const server=http.createServer(async(req,res)=>{
   if(p==='/local/inventory'&&req.method==='GET')return send(res,200,{profile:{id:'local-yadira',full_name:'Yadira',email:credentials.email,role:'admin'},items:JSON.parse(fs.readFileSync('data/inventory.json','utf8'))});
   return send(res,404,{error:'No encontrado'});
  }
- if(p==='/config.js'&&!prod){res.setHeader('Content-Type','text/javascript');res.setHeader('Cache-Control','no-store');return res.end('window.EURO_CONFIG='+JSON.stringify({url:'',key:'',local:!!credentials})+';');}
+ if(p==='/config.js'&&!prod){res.setHeader('Content-Type','text/javascript');res.setHeader('Cache-Control','no-store');return res.end('window.EURO_CONFIG='+JSON.stringify({url:'',key:'',local:!!credentials,textile:true,textilePreview:true})+';');}
+ if(p==='/vendor/exceljs.min.js'&&!prod){res.setHeader('Content-Type','text/javascript');return fs.createReadStream('node_modules/exceljs/dist/exceljs.min.js').pipe(res);}
  if(!prod&&!/^\/(src\/|assets\/|$|index.html$|catalogo.html$)/.test(p)){res.writeHead(404);return res.end('No encontrado');}
  const relative=p==='/'?'/index.html':p;
  let target=path.resolve(base,'.'+relative);if(!prod&&(p.startsWith('/assets/')||p==='/catalogo.html'))target=path.resolve(base,'public','.'+p);

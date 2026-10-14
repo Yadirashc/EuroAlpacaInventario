@@ -1,6 +1,7 @@
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store');
  if(!['GET','POST','PATCH'].includes(req.method))return res.status(405).json({error:'Método no permitido'});
+ if(process.env.VERCEL_ENV==='preview'&&req.method!=='GET')return res.status(409).json({error:'La versión de prueba no modifica cuentas reales.'});
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key)return res.status(503).json({error:'Configura las variables de servidor en Vercel.'});
  const token=req.headers.authorization?.replace(/^Bearer /,'');if(!token)return res.status(401).json({error:'Inicia sesión'});
