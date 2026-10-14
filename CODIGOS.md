@@ -1,14 +1,13 @@
 # Leyenda de códigos EUROALPACA
 
-Ejemplo: **PE01MO**
+Ejemplo: **PE01**
 
 | Parte | Significado |
 | --- | --- |
 | PE | Diseño: petinets |
 | 01 | Número del modelo |
-| MO | Color: mostaza |
 
-Sin guiones. El código comercial tiene 6 caracteres y solo identifica diseño, modelo y color. S, M, L y XL comparten el mismo código. La talla y el material se guardan por separado, con sus propias existencias. El registro interno añade 3 números para distinguir filas originales o registros repetidos; el código comercial permanece corto. Los códigos de color del proveedor se conservan separados en la ficha.
+Sin guiones. El código comercial tiene 4 caracteres e identifica el modelo o diseño. Todos sus colores, tallas y materiales comparten el mismo código. Las variantes mantienen sus propias existencias y precio; los registros internos se conservan para trazabilidad y no se imprimen como código de la prenda. Los códigos de color del proveedor se conservan separados en la ficha.
 
 ## Materiales
 
