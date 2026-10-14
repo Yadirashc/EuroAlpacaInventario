@@ -26,7 +26,7 @@ Hay 2 cantidades desconocidas. Las 396 unidades son la suma de cantidades conoci
 
 ## Uso y actualizaciones
 
-Los códigos comerciales identifican el modelo o diseño, y son iguales para todos sus colores y tallas. Por ejemplo, `SU38` se conserva al elegir beige u olivo, en S o M. Cada talla mantiene sus propias existencias. La ficha permite guardar un precio de venta y moneda; los importes todavía no confirmados permanecen vacíos. Consulta [CODIGOS.md](CODIGOS.md) y [PRECIOS.md](PRECIOS.md).
+Los códigos comerciales identifican modelo y composición, y son iguales para todos sus colores y tallas. Por ejemplo, `SU38AC` se conserva al elegir beige u olivo, en S o M; `AC` significa 15% baby alpaca y 85% algodón Tangüis. Cada talla mantiene sus propias existencias. La ficha permite guardar un precio de venta y moneda; los importes todavía no confirmados permanecen vacíos. Consulta [CODIGOS.md](CODIGOS.md) y [PRECIOS.md](PRECIOS.md).
 
 Las credenciales de administradora se entregaron por separado; no se guardan en este repositorio. El registro público está desactivado. Las cuatro variables de Supabase ya se configuraron en Vercel; la clave privada solo está en el servidor.
 

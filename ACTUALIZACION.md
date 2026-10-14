@@ -4,7 +4,7 @@ El Excel de Google Drive es la única fuente de prendas y características. Se c
 
 Los nombres equivalentes se agrupan sin distinguir mayúsculas, minúsculas ni espacios: hay 40 grupos de modelos. Se conservan todas las filas originales, sus IDs y sus características. Los nombres completos se mantienen y el título del hilo se muestra como 18/2 según el formato original del Excel.
 
-Los códigos cortos no tienen guiones. Ejemplo: PE01 = diseño petinets + modelo 01. El código es igual en todos los colores, tallas y materiales. Consulta CODIGOS.md para la leyenda.
+Los códigos cortos no tienen guiones. Ejemplo: PE01BA = modelo petinets 01 + composición 100% baby alpaca. El código es igual en todos los colores y tallas; una composición diferente tiene otro código. Consulta CODIGOS.md para la leyenda.
 
 La vista Excel muestra las tres hojas y todos sus campos. La administradora puede activar Modo edición, modificar cantidades y guardar con un motivo. Los cambios se guardan en Supabase y generan movimientos de inventario. Consulta MODO_EDICION.md.
 
