@@ -1,0 +1,3 @@
+import {context,fail} from '../server/textile-auth.mjs';
+import {syncDrive,syncSuppliers} from '../server/textile-sync.mjs';
+export default async function handler(req,res){res.setHeader('Cache-Control','no-store');try{if(!process.env.CRON_SECRET||req.headers.authorization!=='Bearer '+process.env.CRON_SECRET)return res.status(401).json({error:'Acceso denegado'});if(process.env.TEXTILE_SYNC_ENABLED!=='true')return res.json({status:'Desactivado hasta autorizar las fuentes'});const c=await context(req,{cron:true});return res.json({drive:await syncDrive(c),suppliers:await syncSuppliers(c)});}catch(e){return fail(res,e);}}
