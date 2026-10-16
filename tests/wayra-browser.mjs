@@ -15,6 +15,6 @@ try{
  }
  await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.locator('dialog .close').click();await page.goto('http://127.0.0.1:4173/catalogo.html');await page.locator('[data-code=CR09]').click();
- assert.equal(await page.locator('#component option').count(),2);for(const p of ['Falda','Blusa']){await page.locator('#component').selectOption(p);assert.equal(await page.locator('.sku-box strong').innerText(),'AMCR09');}
+ assert.equal(await page.locator('#component option').count(),2);for(const p of ['Falda','Blusa']){await page.locator('#component').selectOption(p);assert.equal(await page.locator('.sku-box strong').innerText(),'AMCR09');assert.ok(decodeURIComponent(await page.locator('dialog a.primary').getAttribute('href')).includes(p));}
  assert.deepEqual(errors,[]);console.log('WAYRA OK: ficha única, selector Falda/Blusa, código común AMCR09, cantidades separadas, móvil y catálogo.');
 }finally{await browser.close();}
