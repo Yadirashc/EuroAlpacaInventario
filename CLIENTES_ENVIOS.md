@@ -1,6 +1,6 @@
 # Gestión de Clientes y Envíos / Ubicación
 
-Versión de prueba implementada el 20/10/2026. No modifica automáticamente la web oficial ni su base de datos.
+Publicado y verificado el 20/10/2026 en https://euroalpaca-inventario.vercel.app/. Las migraciones de logística y almacenamiento privado están aplicadas en Supabase. La versión local de demostración sigue separada de los datos reales.
 
 ## Revisar la versión local
 
