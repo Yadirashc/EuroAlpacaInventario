@@ -24,7 +24,7 @@ export function sourceMatch(i){
  if(key==='incatops'&&comp!=='100 royal alpaca')return {reason:'La composición no coincide con 100% royal alpaca.'};
  return {key,source,code:String(i.code).trim().toUpperCase().replace(key==='itessa'?/^NU[\s-]*/:/^$/,''),review:key==='itessa'?'El sitio indica algodón sin precisar Tangüis. Se requiere comprobar ese subtipo en documentación del proveedor antes de confirmar.':''};
 }
-export function officialURL(value){const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!['www.itessa.com.pe','www.michell.com.pe','www.incatops.com'].includes(u.hostname))throw new Error('Fuente ajena a los dominios oficiales permitidos.');return u;}
+export function officialURL(value){const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!['itessa.com.pe','www.itessa.com.pe','michell.com.pe','www.michell.com.pe','incatops.com','www.incatops.com'].includes(u.hostname))throw new Error('La fuente redirigió a una dirección que no se pudo validar como oficial. Requiere revisión manual.');return u;}
 async function safeFetch(url,max=1_500_000){let u=officialURL(url);for(let n=0;n<4;n++){
  const r=await fetch(u,{redirect:'manual',signal:AbortSignal.timeout(6500),headers:{'User-Agent':'EuroAlpaca-CatalogReview/1.0'}});
  if([301,302,303,307,308].includes(r.status)){u=officialURL(new URL(r.headers.get('location'),u).href);continue;}
