@@ -4,7 +4,7 @@ Publicado y verificado el 20/10/2026 en https://euroalpaca-inventario.vercel.app
 
 ## Revisar la versión local
 
-Ejecutar `npm.cmd run dev` en Windows y abrir http://127.0.0.1:4173. Usar el acceso local existente o **Explorar demostración**. Entrar a **Clientes y envíos** o **Ubicación**. En demostración los registros y documentos duran únicamente durante la sesión abierta; no se guardan en la base de datos real.
+Ejecutar `npm.cmd run dev` en Windows y abrir http://127.0.0.1:4173. Usar el acceso local existente o **Explorar demostración**. Entrar a **Clientes y envíos** o a la columna **Ubicación** dentro de **Inventario**. En demostración los registros y documentos duran únicamente durante la sesión abierta; no se guardan en la base de datos real.
 
 Las cinco pestañas son Panel general, Clientes, Registrar envío, Control de lotes e Historial de envíos. La ficha de cliente muestra sus pedidos (referencias), envíos y lotes. Los códigos de cliente, envío y lote de envío son automáticos; un lote de producción se registra por separado y puede utilizarse en varios envíos. El módulo no sustituye un sistema independiente de pedidos comerciales.
 
@@ -17,11 +17,11 @@ Las cinco pestañas son Panel general, Clientes, Registrar envío, Control de lo
 
 ## Ubicación y trazabilidad
 
-**Registrar movimiento** abre el mismo flujo para un traslado sin cliente obligatorio. Admite prendas individuales o lotes completos, cantidades parciales y destinos diferentes para el mismo lote de producción.
+La ubicación se gestiona dentro de **Inventario**, en su columna existente **Ubicación**, tanto en la vista resumida como en la vista Excel. No hay un apartado independiente en el menú. Pulsar la ubicación de una fila abre el destino, responsable, fechas de salida/llegada, lotes, cantidades, estado, observaciones e historial de esa prenda. **Registrar movimiento**, desde esa ficha, selecciona previamente la prenda y su origen; también puede abrirse desde las herramientas del inventario para registrar un lote completo.
 
-Ubicación muestra existencias por ubicación, cantidades en tránsito, producción y vínculos al envío. Los filtros cubren lote, modelo/código, color, talla, material, proveedor, cliente, destino, origen, responsable, fechas y estado. En Ubicación las fechas filtran por recepción, salida o emisión (en ese orden según estén registradas); en Envíos filtran por emisión.
+La tabla de inventario conserva modelo/código, material, color, talla, ubicación, existencias, precio y disponibilidad. La columna Ubicación muestra el último traslado vinculado y permite consultar los movimientos anteriores. Los filtros normales del inventario se combinan con **Filtrar ubicación, lotes y traslados** (lote, país/destino, responsable, fechas y estado). **Historial de ubicaciones** abre el historial desde el mismo inventario. Las fechas de traslado filtran por recepción, salida o emisión (en ese orden según estén registradas); en Envíos filtran por emisión.
 
-**Ver movimientos** sigue los registros relacionados de origen y recepción, incluso en traslados sucesivos, e incluye los movimientos anteriores del inventario. Los movimientos originales conservan los datos que tenían; los nuevos campos no se pueden reconstruir de forma fiable para registros históricos que nunca los incluyeron.
+**Historial completo**, dentro de la ubicación de una prenda, sigue los registros relacionados de origen y recepción, incluso en traslados sucesivos, e incluye los movimientos anteriores del inventario. Los movimientos originales conservan los datos que tenían; los nuevos campos no se pueden reconstruir de forma fiable para registros históricos que nunca los incluyeron.
 
 Los estados Entregado y Recepción confirmada distinguen la entrega informada de la incorporación confirmada a existencias. Un envío despachado no puede cancelarse ni editar sus prendas: una devolución requiere un movimiento nuevo que conserve el historial. Los borradores sí pueden editarse y cancelarse con motivo. El sistema conserva los códigos LEN de los grupos que permanecen al editar y registra los datos anteriores en el historial.
 
