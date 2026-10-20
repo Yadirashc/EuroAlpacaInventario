@@ -1,0 +1,11 @@
+# Eliminar y restaurar registros
+
+La administradora dispone de **Eliminar** en prendas/variantes, modelos completos, proveedores, hilos, colores, conteos de hilo, requerimientos, fotografías, vinculaciones de Drive, clientes, envíos/traslados, documentos, avisos, sincronizaciones y usuarios. Cada acción pide confirmación y motivo. No se elimina ningún registro automáticamente al publicar esta función.
+
+Los registros se retiran de las listas y selectores y pueden recuperarse en **Papelera → Restaurar**. Se conservan los datos, las cantidades y la trazabilidad. Eliminar una prenda con existencias archiva esas unidades; no simula una venta, salida o traslado. Eliminar un usuario revoca su acceso, conservando la autoría de sus movimientos. No puede eliminarse la propia cuenta. Quitar una vinculación de Drive no borra archivos del proveedor.
+
+Los proveedores con hilos, los hilos con colores y los colores con stock o requerimientos pendientes piden resolver primero las dependencias. Los envíos en tránsito o entregados requieren confirmar recepción antes de eliminarlos. Para restaurar un registro se restauran primero sus referencias eliminadas. Los documentos y fotografías permanecen en almacenamiento privado para poder recuperarlos.
+
+En lotes sin despachar, **Eliminar lote** retira sus líneas del borrador y guarda la edición en el historial, sin modificar stock. Si es el último lote, se elimina el envío completo de forma recuperable. Las líneas y materiales del borrador mantienen sus botones **Quitar**. Los lotes ya despachados y los movimientos ejecutados conservan su auditoría; no se borran ni se alteran existencias mediante esta función. En precios, **Eliminar precio** deja el importe pendiente de confirmar y conserva el registro en la auditoría de la prenda.
+
+Aplicar `supabase/record-management.sql` tras las migraciones existentes. La migración añade metadatos de eliminación y una papelera administrativa, bloquea modificaciones a registros eliminados y no cambia sus datos previos. Probar `npm.cmd test`, `node tests/record-management-browser.mjs`, `node tests/logistics-browser.mjs` y `node tests/textile-browser.mjs` con el servidor local. Las pruebas de navegador usan registros ficticios; no eliminan registros reales.
