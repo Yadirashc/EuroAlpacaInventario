@@ -1,5 +1,13 @@
 ﻿# Estado de EUROALPACA
 
+## Corrección del 20/10/2026: ubicación dentro de Inventario
+
+Publicado y verificado en el dominio oficial con el despliegue `dpl_6BsXu77NuueUGkFHbXiZGcr6qdVX` (READY), código `b3568895a63eef89235bb28618a2e779c983d99d`.
+
+Se retiró la opción independiente Ubicación del menú. Sus datos, registro de movimientos, filtros e historial se integraron en la columna **Ubicación** de la tabla existente de **Inventario**, en las vistas resumida y Excel. Pulsar la ubicación de una fila permite consultar traslados y registrar un movimiento con esa prenda y su origen seleccionados. La web quedó abierta en Chrome en Inventario, vista resumida, con sus encabezados originales.
+
+Pasaron las 34 pruebas automatizadas y las pruebas de navegador de logística e inventario. No fue necesaria ninguna migración ni modificación de datos. La comparación completa de inventario antes y después coincide: 226 registros y 396 unidades conocidas.
+
 ## Actualización del 20/10/2026: clientes, envíos y ubicación
 
 Publicado en el dominio oficial con el despliegue `dpl_ALMBMRgjfShpceUcSHrrShRSDUhy`, estado READY. Código publicado: `ec53d0539a0c5ca84ba306b48d34b9662c8dd994`, rama `feature/clientes-envios`, guardada en GitHub.
