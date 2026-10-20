@@ -1,0 +1,29 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {PGlite} from '@electric-sql/pglite';
+import {identityKey,sourceMatch,imageCandidates,officialURL,robotsAllows,colorVerification,discoverPhotos,photoReport,chart} from '../server/color-photo-catalog.mjs';
+const i={color_id:'c',yarn_id:'y',supplier_id:'s',provider:'ITESSA',yarn:'Cancas',code:'NU-050',composition:'15% Baby Alpaca + 85% Algodón Tangüis',title:'18/2'};
+test('fotografías: coincidencia conjunta y exacta sin confundir títulos, proveedores o ceros',()=>{
+ const match=sourceMatch(i);assert.equal(match.code,'050');assert.equal(imageCandidates('productos_imagenes_8_kCxRf.jpg',match)[0].source_hash,chart.hash);
+ assert.equal(imageCandidates('productos_imagenes_8_kCxRf.jpg',sourceMatch({...i,code:'50'})).length,0);
+ for(const change of [{provider:'Inca Tops'},{title:'2/28'},{composition:'100% Baby alpaca'},{code:''}])assert.ok(sourceMatch({...i,...change}).reason);
+ const m=sourceMatch({...i,provider:'Michell',yarn:'Baby alpaca',code:'201',title:'2/28',composition:'100% Baby alpaca'});
+ assert.equal(imageCandidates('<img alt="202" src="/202.webp">',m).length,0);assert.equal(imageCandidates('<img alt="201" src="https://evil.test/a.jpg">',m).length,0);
+ assert.equal(imageCandidates('<img alt="201" src="/201.webp">',m).length,1);
+ for(const url of ['http://www.itessa.com.pe/a','https://www.itessa.com.pe.evil.test/a','https://127.0.0.1/a','https://user@www.itessa.com.pe/a'])assert.throws(()=>officialURL(url));
+ assert.equal(robotsAllows('User-agent: *\nDisallow: /stockservice/','/stockservice/a'),false);assert.equal(robotsAllows('User-agent: *\nDisallow: /\nAllow: /public/','/public/a'),true);
+});
+test('actualización reutiliza consultas guardadas, conserva pendientes y no almacena imágenes sin permiso',async()=>{
+ const color={id:'c',yarn_id:'y',code:'NU-050',name:'Color'},yarn={id:'y',supplier_id:'s',name:i.yarn,composition:i.composition,title:i.title},supplier={id:'s',name:i.provider};let writes=[],checks=[];
+ const c={stage:'production',profile:{id:'admin'},db:async(path,opts={})=>{if(path.startsWith('textile_photo_sources'))return [{checked_at:new Date().toISOString(),result:{html:'productos_imagenes_8_kCxRf.jpg',robots:'User-agent: *\nAllow: /'}}];if(path.startsWith('textile_photo_checks')){if(opts.method==='POST')checks=opts.body;return checks;}if(opts.method){writes.push(path);return [];}return path.startsWith('textile_colors')?[color]:path.startsWith('textile_yarns')?[yarn]:path.startsWith('textile_suppliers')?[supplier]:[];}};
+ const previous=global.fetch;global.fetch=()=>{throw new Error('No debe descargar fuentes ni imágenes ya consultadas');};try{let report=await discoverPhotos(c);assert.equal(report.total,1);assert.equal(report.found,1);assert.equal(report.verified,0);assert.equal(report.pending,1);assert.equal(writes.length,0);await assert.rejects(colorVerification(c,{color_id:'c',rights_confirmed:true}),/Confirma/);assert.equal((await photoReport(c)).rows[0].candidates.length,1);assert.notEqual(identityKey(i),identityKey({...i,code:'50'}));}finally{global.fetch=previous;}
+});
+test('PostgreSQL fotografías: permisos, certificación documentada y confirmación idempotente',async()=>{
+ const db=new PGlite();try{await db.exec(`CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY,email text,raw_user_meta_data jsonb DEFAULT '{}');CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;GRANT USAGE ON SCHEMA public,auth TO anon,authenticated,service_role;CREATE PUBLICATION supabase_realtime;CREATE SCHEMA storage;CREATE TABLE storage.objects(bucket_id text,name text);ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;`);
+ for(const f of ['schema.sql','textile.sql','logistics.sql','record-management.sql','color-photos.sql'])await db.exec(fs.readFileSync('supabase/'+f,'utf8'));
+ const admin='00000000-0000-0000-0000-000000000001',viewer='00000000-0000-0000-0000-000000000002',supplier='10000000-0000-0000-0000-000000000001',yarn='10000000-0000-0000-0000-000000000002',color='10000000-0000-0000-0000-000000000003';
+ await db.exec(`INSERT INTO auth.users(id,email) VALUES('${admin}','admin@example.test'),('${viewer}','viewer@example.test');UPDATE profiles SET role='admin' WHERE id='${admin}';INSERT INTO textile_suppliers(id,stage,code,name,website) VALUES('${supplier}','production','QA','QA','https://example.test');INSERT INTO textile_yarns(id,stage,supplier_id,reference_key,name) VALUES('${yarn}','production','${supplier}','qa','QA');INSERT INTO textile_colors(id,stage,yarn_id,reference_key,name) VALUES('${color}','production','${yarn}','qa','QA');SET ROLE authenticated;SET request.jwt.claim.sub='${viewer}';`);
+ assert.equal((await db.query('SELECT * FROM textile_photo_checks')).rows.length,0);await assert.rejects(db.query('SELECT confirm_color_photo($1)',[{}]),/administradora/);
+ await db.exec(`SET request.jwt.claim.sub='${admin}'`);const body={id:crypto.randomUUID(),stage:'production',color_id:color,yarn_id:yarn,name:'QA',kind:'color',visibility:'team',rights_confirmed:true,verification_status:'verified',verified_at:new Date().toISOString(),verified_by:admin};
+ await assert.rejects(db.query('SELECT confirm_color_photo($1)',[body]),/coincidencia/);
+ body.permission_reference='Autorización de prueba';body.source_identity={color_id:color,yarn_id:yarn};await db.query('SELECT confirm_color_photo($1)',[body]);await assert.rejects(db.query('SELECT confirm_color_photo($1)',[{...body,id:crypto.randomUUID()}]),/ya tiene/);assert.equal((await db.query('SELECT count(*)::int AS n FROM textile_photos')).rows[0].n,1);
+ }finally{await db.close();}
+});
