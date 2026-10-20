@@ -1,5 +1,17 @@
 ﻿# Estado de EUROALPACA
 
+## Actualización del 20/10/2026: clientes, envíos y ubicación
+
+Publicado en el dominio oficial con el despliegue `dpl_ALMBMRgjfShpceUcSHrrShRSDUhy`, estado READY. Código publicado: `ec53d0539a0c5ca84ba306b48d34b9662c8dd994`, rama `feature/clientes-envios`, guardada en GitHub.
+
+Se aplicaron `supabase/logistics.sql` y `supabase/logistics-storage.sql`. Están disponibles Gestión de Clientes y Envíos (cinco pestañas), Ubicación y trazabilidad, formularios vinculados al inventario, documentos privados y reportes. Instrucciones: [CLIENTES_ENVIOS.md](CLIENTES_ENVIOS.md).
+
+Validación en producción: acceso autenticado a las seis tablas nuevas; lectura anónima rechazada; panel y formularios verificados en Chrome; despacho y recepción idempotentes comprobados dentro de una transacción revertida. No quedaron clientes, envíos ni prendas ficticias. La comparación de todos los campos anteriores de inventario coincide antes y después: 226 registros, 396 unidades conocidas y 2 cantidades pendientes. Se guardó una copia privada de inventario y movimientos en `data/logistics-deploy/inventory-before.json`, excluida de Git.
+
+La compilación y las 34 pruebas automatizadas pasaron antes de publicar; también las pruebas de navegador de logística, inventario y WAYRA. El panel quedó abierto en Chrome en el dominio oficial.
+
+## Publicación inicial
+
 Publicado y verificado el 13/10/2026.
 
 - Web: https://euroalpaca-inventario.vercel.app
