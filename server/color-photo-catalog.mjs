@@ -15,6 +15,7 @@ export const chart={url:'https://www.itessa.com.pe/img_productos/productos_image
 export const babyChart={url:'https://www.itessa.com.pe/img_productos/productos_imagenes_1_tN9V2.jpg',hash:'5be420b3f6b99736decf0cb213299d0d808fc3695452e6beafd75c59a4306ea3',width:600,height:400,crops:{'201':[57,0,159,96],'1496':[57,96,159,100],'8376':[57,196,159,105],'9861':[57,301,159,99],'2618':[221,0,159,103],'3812':[221,103,159,99],'8420':[221,202,159,103],'7680':[221,305,159,95],'5778':[385,0,158,96],'9434':[385,96,158,106],'9403':[385,202,158,98],'500':[385,300,158,100]}};
 export function identity(color,yarn,supplier){return {color_id:color.id,yarn_id:yarn.id,supplier_id:supplier.id,provider:supplier.name,yarn:yarn.name,code:color.code,composition:yarn.composition,fiber:yarn.fiber,title:yarn.title};}
 export const identityKey=i=>digest(i);
+export function samePhotoIdentity(a,b){const left=sourceMatch(a),right=sourceMatch(b);return !!left.key&&left.key===right.key&&left.code===right.code&&['supplier_id','composition','title','fiber'].every(k=>a[k]===b[k])&&norm(a.yarn)===norm(b.yarn);}
 export function sourceMatch(i){
  if(!String(i.code||'').trim())return {reason:'Falta el código de color original; no se puede identificar una variante exacta.'};
  const provider=norm(i.provider).replaceAll(' ',''),name=norm(i.yarn),key=provider.includes('itessa')?(name==='baby alpaca'?'itessaBaby':'itessa'):provider.includes('michell')?'michell':provider.includes('incatops')?'incatops':null;
@@ -78,7 +79,7 @@ export async function confirmPhoto(c,b){const verification=await colorVerificati
  const match=sourceMatch(verification.source_identity),[cached]=await c.db('textile_photo_sources?stage=eq.'+c.stage+'&source_key=eq.'+match.key,{service:true});
  if(!cached?.result?.robots||!robotsAllows(cached.result.robots,new URL(candidate.image_url).pathname))throw new Error('No se ha confirmado que la fuente permita descargar la imagen.');
  const existing=await c.db('textile_photos?stage=eq.'+c.stage+'&active=eq.true&deleted_at=is.null&verification_status=eq.verified&limit=10000');
- const asset=existing.find(p=>p.source_image_url===candidate.image_url&&['supplier_id','yarn_id','code','composition','title'].every(k=>p.source_identity?.[k]===verification.source_identity[k])&&p.storage_full&&p.storage_thumb);
+ const asset=existing.find(p=>p.source_image_url===candidate.image_url&&p.source_identity&&samePhotoIdentity(p.source_identity,verification.source_identity)&&p.storage_full&&p.storage_thumb);
  if(asset)return c.db('rpc/confirm_color_photo',{method:'POST',body:{p_photo:{id:randomUUID(),stage:c.stage,color_id:b.color_id,yarn_id:verification.yarn_id,name:verification.source_identity.yarn+' · '+verification.source_identity.code,kind:'color',visibility:'team',rights_confirmed:true,mime_type:'image/webp',...verification,storage_full:asset.storage_full,storage_thumb:asset.storage_thumb,storage_asset_id:asset.storage_asset_id||asset.id,storage_name:asset.storage_name,source_url:candidate.source_url,source_image_url:candidate.image_url,content_hash:asset.content_hash}}});
  let bytes;
  if(candidate.crop&&cached.result.original_path){const r=await fetch(c.url+'/storage/v1/object/authenticated/textile-private/'+cached.result.original_path,{headers:{apikey:c.key,Authorization:'Bearer '+c.key}});bytes=await limitedBuffer(r,10_000_000);}
