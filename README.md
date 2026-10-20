@@ -6,6 +6,8 @@ La rama de prueba añade cartas de colores, proveedores, hilos, stock en kg, req
 
 Web publicada: https://euroalpaca-inventario.vercel.app. Consulta [MODO_EDICION.md](MODO_EDICION.md) para la vista fiel al Excel y edición de cantidades; [DEPLOYMENT.md](DEPLOYMENT.md) describe el despliegue y [LEEME.md](LEEME.md) la instalación en un proyecto nuevo.
 
+La ampliación **Gestión de Clientes y Envíos** añade las cinco pestañas de clientes, envíos, lotes e historial, además de **Ubicación y trazabilidad**, documentos privados y reportes Excel/PDF. Consulta [CLIENTES_ENVIOS.md](CLIENTES_ENVIOS.md) para revisar la versión local, aplicar las migraciones y entender el flujo de despacho/recepción. La versión oficial no cambia automáticamente.
+
 ```sh
 npm ci
 npm run build
