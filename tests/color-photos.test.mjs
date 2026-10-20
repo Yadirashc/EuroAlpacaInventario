@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 import {identityKey,sourceMatch,imageCandidates,officialURL,robotsAllows,colorVerification,discoverPhotos,photoReport,chart} from '../server/color-photo-catalog.mjs';
 const i={color_id:'c',yarn_id:'y',supplier_id:'s',provider:'ITESSA',yarn:'Cancas',code:'NU-050',composition:'15% Baby Alpaca + 85% Algodón Tangüis',title:'18/2'};
 test('fotografías: coincidencia conjunta y exacta sin confundir títulos, proveedores o ceros',()=>{
- const match=sourceMatch(i);assert.equal(match.code,'050');assert.equal(imageCandidates('productos_imagenes_8_kCxRf.jpg',match)[0].source_hash,chart.hash);
+ const ba=sourceMatch({...i,yarn:'Baby alpaca',code:'BA - 201',title:'2/28',composition:'100% baby alpaca'});assert.equal(ba.key,'itessaBaby');assert.equal(imageCandidates('productos_imagenes_1_tN9V2.jpg',ba).length,1);assert.equal(sourceMatch({...i,composition:'15% baby alpaca + 85% algodón + 10% nylon'}).source,undefined);const match=sourceMatch(i);assert.equal(match.code,'050');assert.equal(imageCandidates('productos_imagenes_8_kCxRf.jpg',match)[0].source_hash,chart.hash);
  assert.equal(imageCandidates('productos_imagenes_8_kCxRf.jpg',sourceMatch({...i,code:'50'})).length,0);
  for(const change of [{provider:'Inca Tops'},{title:'2/28'},{composition:'100% Baby alpaca'},{code:''}])assert.ok(sourceMatch({...i,...change}).reason);
  const m=sourceMatch({...i,provider:'Michell',yarn:'Baby alpaca',code:'201',title:'2/28',composition:'100% Baby alpaca'});
