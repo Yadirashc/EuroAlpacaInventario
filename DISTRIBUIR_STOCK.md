@@ -36,3 +36,9 @@ node tests/logistics-browser.mjs
 La prueba nueva de navegador usa PostgreSQL PGlite real para las RPC y datos ficticios aislados. Verifica el caso Lima 10 → Lima 2 / España 8 → España 5 / Vendida 3, doble clic, comprador/persona/origen en historial, recarga, filtros, total disponible y móvil. Las pruebas SQL cubren acumulación en destino, insuficiencia de stock, separación de color y talla, permisos, correcciones, historial inmutable, migración de ventas anteriores y repetición de migración.
 
 La compilación local sin variables públicas genera una demostración. En Vercel se deben conservar las variables de Supabase ya configuradas; no reemplazar el sitio publicado con un `dist` local sin conexión.
+
+## Selector de prendas de envíos
+
+El selector de **Registrar movimiento → Prendas y lotes del envío** incluye las filas no archivadas con cantidad mayor a cero en la ubicación de origen. Tanto **En stock** como **Stock bajo** son seleccionables, incluida una única unidad. Las opciones muestran código, modelo, categoría, color, talla, ubicación, cantidad y estado calculado con el stock mínimo de la fila. Cero, cantidades sin confirmar y Vendida no se ofrecen para envío.
+
+Esta corrección del selector no necesita migración adicional. Conserva las validaciones acumuladas por prenda, los lotes, materiales y responsables, el descuento al confirmar despacho y la recepción idempotente. Pruebas específicas: `node tests/shipment-picker-browser.mjs`; regresiones: `node --test tests/logistics.test.mjs` y `node tests/logistics-browser.mjs`. Todas pasaron, junto con la compilación.
