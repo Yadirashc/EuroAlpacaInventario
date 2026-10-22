@@ -37,11 +37,8 @@ Solo el material y el modelo determinan el código. Colores, tallas y porcentaje
 | ACRA05 | Baby alpaca + algodón | Vestido raport - 2 colores |
 | ACSU29 | Baby alpaca + algodón | Sumaq |
 | ACSU38 | Baby alpaca + algodón | Suyay |
-| AMCR09 | Baby alpaca + microfibra | Falda con detalles a crochet |
-| AMCR10 | Baby alpaca + microfibra | Blusa con detalles a crochet |
+| AMCR09 | Baby alpaca + microfibra | Conjunto WAYRA (falda y blusa) |
 | AMIL42 | Baby alpaca + microfibra | Illari |
-| AMWA39 | Baby alpaca + microfibra | Wayra |
-| AMWA40 | Baby alpaca + microfibra | Wayra |
 | APRA06 | Baby alpaca + PET | Vestido raport - 4 colores |
 | APTR03 | Baby alpaca + PET | Vestido trenzas |
 | BAAJ02 | Baby alpaca | Bufanda ajedrez 4×4 |
