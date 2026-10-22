@@ -1,5 +1,7 @@
 # Ficha única Allin / Cancas
 
+Publicada el 22/10/2026 en https://euroalpaca-inventario.vercel.app/, despliegue `dpl_dw2fT1gAyETeVJ9zJLpZxq7svgJ9`, READY, código `fabdd8434cd2fec9b7d2c92eeb64d1d4d147b1f5`. El código servido y la ficha del dominio oficial se comprobaron con datos aislados. La comparación integral del inventario antes/después coincide: 297 registros, 398 unidades conocidas, hash `32ea884d99b297afeea6f06d02d733ab`. Los 34 registros Allin y todos sus movimientos, operaciones e historial permanecen idénticos.
+
 Allin, Cancas y Bufanda Cancas se reúnen en una sola ficha de modelo. En Inventario, tanto la vista resumida como la vista Excel presentan una entrada agrupada dentro de los filtros y la hoja seleccionados. Abrirla muestra el total completo del modelo, sumas por ubicación y el desglose por material, composición, color, talla y ubicación.
 
 La agrupación suma cada ID una sola vez. No crea unidades ni modifica cantidades en Supabase. Las cantidades desconocidas permanecen indicadas como pendientes y las ventas se separan de las existencias actuales. La ficha agrupa materiales para su presentación y mantiene el detalle de cada variante; no convierte baby alpaca pura en Cancas.

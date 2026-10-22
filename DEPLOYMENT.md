@@ -1,5 +1,9 @@
 ﻿# Estado de EUROALPACA
 
+## Ficha única Allin / Cancas — 22/10/2026
+
+Publicada en el dominio oficial con `dpl_dw2fT1gAyETeVJ9zJLpZxq7svgJ9`, READY, código `fabdd8434cd2fec9b7d2c92eeb64d1d4d147b1f5`. Agrupa 34 registros en una ficha con 106 unidades: 93 España, 7 Lima, 6 muestras/revisión; por material, 105 Cancas y 1 baby alpaca pura. Conserva color, talla, ubicación y materiales, con acceso al desglose original. No se modificaron cantidades ni historial y no hubo migración. El inventario completo mantiene 297 registros y 398 unidades conocidas, hash integral anterior/posterior `32ea884d99b297afeea6f06d02d733ab`. Documentación y comprobaciones: [ALLIN_CANCAS.md](ALLIN_CANCAS.md).
+
 ## Distribución, Vendida y selector de envíos — 22/10/2026
 
 Publicado en https://euroalpaca-inventario.vercel.app/ con el despliegue `dpl_EdmLr152JYUiXt7TxsY4XMcUEosA`, READY, código `3c0ca0a37f99f11ae09d4a8c8076a392479baf80`. Se aplicó la migración `stock_distribution_and_sold_rows`. Instrucciones y verificación: [DISTRIBUIR_STOCK.md](DISTRIBUIR_STOCK.md).
