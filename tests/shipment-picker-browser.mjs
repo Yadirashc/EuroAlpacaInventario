@@ -16,6 +16,10 @@ try{
   for(const expected of [variantSku(items[n]),'Aruma','VESTIDO',items[n].color,'M','Lima','Stock: '+items[n].quantity,status])assert.ok(label.includes(expected),label);
   assert.equal(await option.isDisabled(),false);
  }
+ await page.locator('#log-stock-filter').selectOption('stock');assert.equal(await options.count(),1);assert.equal(await options.first().getAttribute('value'),items[0].id);
+ await page.locator('#log-stock-filter').selectOption('low');assert.equal(await options.count(),1);assert.equal(await options.first().getAttribute('value'),items[1].id);
+ await page.locator('#log-item-picker').selectOption(items[1].id);await page.locator('#log-add-line').click();assert.equal(await page.locator('[data-key=quantity]').count(),1);await page.locator('[data-log-remove]').click();
+ await page.locator('#log-stock-filter').selectOption('');assert.equal(await options.count(),2);
  await page.locator('[name=origin]').selectOption('España');assert.equal(await options.count(),1);assert.equal(await options.first().getAttribute('value'),items[4].id);
  await page.locator('[name=origin]').selectOption('Vendida');assert.equal(await options.count(),0);
  await page.locator('[name=origin]').selectOption('Lima');
