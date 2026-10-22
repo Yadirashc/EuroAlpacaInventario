@@ -14,7 +14,9 @@ Implementación sobre la tabla existente. Conserva columnas, fotografías, estil
 
 ## Base de datos y publicación
 
-Esta modificación necesita aplicar `supabase/stock-distribution.sql` **después** de las migraciones actuales, incluida `supabase/stock-control.sql`, antes de publicar el código nuevo en Vercel. No se ha aplicado a producción en esta sesión: falta una conexión operativa a Supabase y Vercel.
+Publicada el 22/10/2026 en https://euroalpaca-inventario.vercel.app/. Se aplicó `supabase/stock-distribution.sql` después de `stock-control.sql`, registrada como `stock_distribution_and_sold_rows`. Despliegue Vercel `dpl_EdmLr152JYUiXt7TxsY4XMcUEosA`, READY, código `3c0ca0a37f99f11ae09d4a8c8076a392479baf80`.
+
+Las 226 filas y las 396 unidades conocidas conservan todos sus campos: hash integral anterior y posterior `f11e752d12e084708e77b788898c5859`. Las RPC de traslado y venta, sus reintentos y el historial se comprobaron en producción dentro de una transacción revertida. No quedaron registros ficticios. El dominio oficial sirve los cinco módulos nuevos y conserva la configuración de Supabase y el modo producción. Las pruebas de navegador del código publicado, con datos aislados, comprobaron distribución, ventas y selección de stock normal y bajo.
 
 La migración es transaccional y repetible. Reutiliza `items`, `movements` y `stock_operations`; añade el tipo traslado, la RPC `distribute_stock` y la sincronización de ventas con las filas Vendida. Materializa las ventas históricas netas existentes sin volver a descontarlas del origen ni modificar sus registros.
 

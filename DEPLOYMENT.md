@@ -1,5 +1,11 @@
 ﻿# Estado de EUROALPACA
 
+## Distribución, Vendida y selector de envíos — 22/10/2026
+
+Publicado en https://euroalpaca-inventario.vercel.app/ con el despliegue `dpl_EdmLr152JYUiXt7TxsY4XMcUEosA`, READY, código `3c0ca0a37f99f11ae09d4a8c8076a392479baf80`. Se aplicó la migración `stock_distribution_and_sold_rows`. Instrucciones y verificación: [DISTRIBUIR_STOCK.md](DISTRIBUIR_STOCK.md).
+
+Las 226 filas y las 396 unidades conocidas conservan todos sus campos: hash integral `f11e752d12e084708e77b788898c5859` antes y después. Traslado, venta, reintentos e historial se comprobaron con una transacción revertida en producción. El código servido en el dominio coincide con los cinco módulos publicados y conserva la configuración de Supabase. Las pruebas de navegador del dominio, con datos aislados, verificaron distribución 10→2/8, venta 8→5/3 y selección de prendas En stock y Stock bajo, incluida una sola unidad. Pasaron las 43 pruebas automatizadas previas, compilación y regresiones de logística y ventas.
+
 ## Corrección del 20/10/2026: ubicación dentro de Inventario
 
 Publicado y verificado en el dominio oficial con el despliegue `dpl_6BsXu77NuueUGkFHbXiZGcr6qdVX` (READY), código `b3568895a63eef89235bb28618a2e779c983d99d`.
