@@ -1,8 +1,9 @@
 import {normalize} from './domain.mjs';
 import {compositionKey} from './composition.mjs';
+import {isAllin} from './allin.mjs';
 export const segment=s=>normalize(s).replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'');
 export const isWayraSet=r=>['FAL','BLU'].includes(categoryCode(r.category))&&(['CR09','CR10','WA39','WA40','EA-0009','EA-0010'].includes(r.model_code)||['WAYRA','CONJUNTO WAYRA'].includes(normalize(r.name)));
-export const modelKey=r=>isWayraSet(r)?'CONJUNTO|WAYRA':categoryCode(r.category)+'|'+normalize(r.name).replace(/\s+/g,' ').trim();
+export const modelKey=r=>isWayraSet(r)?'CONJUNTO|WAYRA':isAllin(r)?'BUF|ALLIN-CANCAS':categoryCode(r.category)+'|'+normalize(r.name).replace(/\s+/g,' ').trim();
 export function canonicalModelRows(rows){const canonical=new Map();for(const r of rows){const identity=modelIdentity(r),key=modelKey(r),n=Number(identity.code.match(/\d+$/)?.[0]||999);if(!canonical.has(key)||n<canonical.get(key).n)canonical.set(key,{...identity,n});}return rows.map(r=>{const model=canonical.get(modelKey(r));return {...r,...(isWayraSet(r)?{name:'Conjunto WAYRA'}:{}),model_code:model.code,sku:r.sku||inventorySku({...r,model_code:model.code})};});}
 const shortNames={
  'EA-0001':['Bufanda petinets','BUF-PETINETS'], 'EA-0002':['Bufanda ajedrez 4×4','BUF-AJEDREZ4X4'],
