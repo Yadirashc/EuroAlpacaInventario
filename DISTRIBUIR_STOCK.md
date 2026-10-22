@@ -41,6 +41,8 @@ La compilación local sin variables públicas genera una demostración. En Verce
 
 ## Selector de prendas de envíos
 
+Junto a **Seleccionar prenda del inventario**, el selector **Disponibilidad** permite elegir **Stock y Stock bajo**, **STOCK** o **STOCK BAJO**. Este ajuste está publicado con el despliegue `dpl_G4qxUWzmAhHbKtJi3DvpXNQNvJQZ`, READY, código `d846095c2ea8eacf77cfa2486e0337e8fd72d21c`. Se comprobaron las tres opciones y la selección de una sola unidad contra el código del dominio oficial, usando datos aislados.
+
 El selector de **Registrar movimiento → Prendas y lotes del envío** incluye las filas no archivadas con cantidad mayor a cero en la ubicación de origen. Tanto **En stock** como **Stock bajo** son seleccionables, incluida una única unidad. Las opciones muestran código, modelo, categoría, color, talla, ubicación, cantidad y estado calculado con el stock mínimo de la fila. Cero, cantidades sin confirmar y Vendida no se ofrecen para envío.
 
 Esta corrección del selector no necesita migración adicional. Conserva las validaciones acumuladas por prenda, los lotes, materiales y responsables, el descuento al confirmar despacho y la recepción idempotente. Pruebas específicas: `node tests/shipment-picker-browser.mjs`; regresiones: `node --test tests/logistics.test.mjs` y `node tests/logistics-browser.mjs`. Todas pasaron, junto con la compilación.
