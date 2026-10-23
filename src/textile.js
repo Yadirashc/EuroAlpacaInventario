@@ -1,4 +1,5 @@
 import {PHOTO_ACCEPT,PHOTO_FORMATS,photoMime} from './photo-formats.mjs';
+import {inventoryColorPhoto} from './inventory-color-photos.mjs';
 import {verifiedPhoto,sameVariant} from './photo-identity.mjs';
 import {request,getSession,ensureSession} from './client.js';
 import {parseCSV} from './csv.mjs';
@@ -144,9 +145,19 @@ const actions={'photo-review':openPhotoReport,refresh:reload,'new-color':()=>col
   const identity={provider:item.supplier,yarn:item.commercial_name,code:item.color_code,composition:item.composition,title:item.yarn_title,fiber:item.material};
   const c=active('colors').find(c=>sameVariant({...colorIdentity(c),fiber:identity.fiber},identity));const p=c&&photo(c);return p?'<section class="item-yarn-photo"><p class="eyebrow">Fotografía verificada del hilo · '+esc(c.code)+'</p>'+image(p)+'</section>':'';
  }
+ function inventoryColorImages(item){
+  const rows=item.allin_group||item.inventory_group||[item],seen=new Set();
+  const images=rows.flatMap(row=>{
+   const match=inventoryColorPhoto(row,data),label=[row.color,row.color_code].filter(Boolean).join(' · ')||'Color sin registrar';
+   const key=match?'photo:'+match.photo.id:JSON.stringify([row.color,row.color_code,row.supplier,row.commercial_name,row.composition,row.yarn_title]);
+   if(seen.has(key))return [];seen.add(key);
+   return match?image(match.photo,'inventory-color-photo').replace(' aria-label=',' title="'+esc(label)+'" aria-label='):'<span class="inventory-color-pending" role="img" title="'+esc(label)+' · Fotografía pendiente" aria-label="'+esc(label)+' · Fotografía pendiente">◇</span>';
+  });
+  return '<span class="inventory-color-images">'+images.join('')+'</span>';
+ }
  function photosForModel(code){return active('photos').filter(p=>p.model_code===code&&p.kind==='producto'&&p.rights_confirmed).sort((a,b)=>String(a.name).localeCompare(String(b.name)));}
  function modelCover(code){const p=photosForModel(code)[0];return p?'<span class="model-private-cover"><img data-private-photo="'+p.id+'" alt="'+esc(p.name)+'" loading="lazy" decoding="async"></span>':'';}
  function modelPhotos(code){return photosForModel(code).map(p=>'<div class="model-photo-item">'+image(p)+'</div>').join('');}
  function destroy(){observer?.disconnect();for(const u of urls.values())URL.revokeObjectURL(u);for(const p of data.photos)if(p._url)URL.revokeObjectURL(p._url);urls.clear();loaded=false;selected=[];serverStatus=null;}
- return {load,seed,content,bind,enter,itemYarnPhoto,modelPhotos,modelCover,hydrateImages,destroy,has:tab=>tabs.some(([id])=>id===tab),nav:()=>tabs,data:()=>data};
+ return {load,seed,content,bind,enter,itemYarnPhoto,inventoryColorImages,modelPhotos,modelCover,hydrateImages,destroy,has:tab=>tabs.some(([id])=>id===tab),nav:()=>tabs,data:()=>data};
 }
