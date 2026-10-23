@@ -12,5 +12,19 @@ try{
  fs.mkdirSync('data/qa',{recursive:true});await page.locator('.inventory-panel').screenshot({path:'data/qa/inventory-color-images.png'});
  await page.locator('#search').fill('Rojo');assert.equal(await page.locator('.inventory-color-photo').count(),1);
  await page.locator('#view-excel').click();await page.locator('.excel-table .inventory-color-photo').first().scrollIntoViewIfNeeded();await page.locator('.excel-table .inventory-color-photo img.ready').first().waitFor();assert.equal(await page.locator('.excel-table .inventory-color-photo').count(),1);assert.equal(await page.locator('.excel-table .inventory-color-pending').count(),1);
- assert.deepEqual(errors,[]);console.log('PASS: Carta de colores -> inventario, miniatura sin nombre/código, ampliación, grupos, filtros y vista Excel; no foto para proveedor sin coincidencia.');
+ await page.locator('#view-summary').click();
+ let sample=page.locator('.inventory-color-sample').filter({has:page.locator('.inventory-color-photo')});
+ assert.equal(await sample.locator('.inventory-color-name').innerText(),'Rojo');
+ const nameBounds=await sample.locator('.inventory-color-name').boundingBox(),photoBounds=await sample.locator('.inventory-color-photo').boundingBox();assert.ok(nameBounds.y+nameBounds.height<=photoBounds.y);
+ const photoID=await sample.locator('img').getAttribute('data-private-photo');
+ await sample.locator('.inventory-color-name').click();await page.locator('dialog [data-color-route=textile]').click();
+ await page.locator('.textile-linked-colors').waitFor();assert.equal(await page.locator('.linked-color-card').count(),1);assert.match(await page.locator('.linked-color-card .detail-grid').innerText(),/5 unidades/);assert.equal(await page.locator('.linked-color-card img').getAttribute('data-private-photo'),photoID);
+ await page.locator('.linked-color-card [data-color-route=colors]').click();assert.equal(await page.locator('.color-library-card').count(),1);await page.locator('.color-library-card [data-t-color]').click();await page.locator('#edit-color').click();await page.locator('dialog [name=name]').fill('Rojo rubí');await page.locator('dialog button[type=submit]').first().click();await page.locator('dialog').waitFor({state:'hidden'});
+ assert.equal(await page.locator('.color-library-card h2').innerText(),'Rojo rubí');
+ await page.locator('.color-library-card [data-color-route=inventory]').click();assert.equal(await page.locator('.inventory-panel tbody tr').count(),1);assert.equal(await page.locator('.inventory-color-name').innerText(),'Rojo rubí');assert.match(await page.locator('.linked-color-context').innerText(),/Color vinculado: Rojo rubí/);
+ await page.locator('.inventory-color-name').click();await page.locator('#color-stock').click();await page.locator('dialog [name=stock_kg]').fill('1.25');await page.locator('dialog [name=notes]').fill('Conteo QA');await page.locator('dialog button[type=submit]').click();await page.locator('dialog').waitFor({state:'hidden'});
+ await page.locator('.linked-color-context [data-color-route=textile]').click();assert.match(await page.locator('.linked-color-card .detail-grid').innerText(),/1[.,]25 kg/);assert.equal(await page.locator('.linked-color-card h3').innerText(),'Rojo rubí');
+ await page.locator('.linked-color-card [data-color-route=inventory]').click();await page.locator('.inventory-panel').screenshot({path:'data/qa/inventory-color-linked.png'});await page.locator('[data-color-clear]').click();assert.equal(await page.locator('.inventory-panel tbody tr').count(),2);
+ await page.locator('[data-tab=textile]').click();assert.equal(await page.locator('.linked-color-card').count(),3);await page.setViewportSize({width:390,height:844});await page.locator('.textile-linked-colors').screenshot({path:'data/qa/panel-colors-linked-mobile.png'});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ assert.deepEqual(errors,[]);console.log('PASS: nombre encima de foto; inventario, carta y panel usan la misma ficha, foto y stock; enlaces en ambas direcciones, filtro exacto por proveedor y actualización de nombres.');
 }finally{await browser.close();server.close();}

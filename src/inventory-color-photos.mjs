@@ -2,7 +2,7 @@ import {sameVariant,verifiedPhoto} from './photo-identity.mjs';
 import {displayYarnTitle} from './yarn.mjs';
 
 // Coincidencia técnica completa: nunca inferir una fotografía solo por el nombre del color.
-export function inventoryColorPhoto(item,data){
+export function inventoryColorMatches(item,data){
  const identity={provider:item.supplier,yarn:item.commercial_name,code:item.color_code,composition:item.composition,title:displayYarnTitle(item.yarn_title),fiber:item.material};
  const matches=[];
  for(const color of data.colors){
@@ -13,9 +13,17 @@ export function inventoryColorPhoto(item,data){
   const candidate={color_id:color.id,yarn_id:yarn.id,supplier_id:supplier.id,provider:supplier.name,yarn:yarn.name,code:color.code,composition:yarn.composition,title:displayYarnTitle(yarn.title),fiber:yarn.fiber};
   if(!sameVariant({...candidate,fiber:identity.fiber},identity))continue;
   const photo=verifiedPhoto(data.photos,{...candidate,title:yarn.title});
-  if(photo)matches.push({color,photo});
+  matches.push({color,photo});
  }
+ return matches;
+}
+export function inventoryColorPhoto(item,data){
+ const matches=inventoryColorMatches(item,data).filter(match=>match.photo);
  // Varias fichas con fotografías diferentes requieren revisión antes de elegir una.
  const unique=new Map(matches.map(match=>[match.photo.storage_full||match.photo._url||match.photo.id,match]));
  return unique.size===1?[...unique.values()][0]:null;
+}
+export function inventoryColorRecord(item,data){
+ const matches=inventoryColorMatches(item,data);
+ return matches.length===1?matches[0]:inventoryColorPhoto(item,data);
 }

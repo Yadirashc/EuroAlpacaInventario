@@ -1,10 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {inventoryColorPhoto} from '../src/inventory-color-photos.mjs';
+import {inventoryColorPhoto,inventoryColorMatches,inventoryColorRecord} from '../src/inventory-color-photos.mjs';
 
 const item={supplier:'ITESSA',commercial_name:'Baby Alpaca',material:'Baby alpaca',composition:'100% Baby Alpaca',yarn_title:'2/28',color:'Rojo',color_code:'BA - 201'};
 const identity={provider:'ITESSA',supplier_id:'s',yarn:'Baby Alpaca',yarn_id:'y',color_id:'c',fiber:'Baby alpaca',composition:'100% Baby Alpaca',title:'2/28',code:'201'};
 const seed=()=>({suppliers:[{id:'s',name:'ITESSA'}],yarns:[{id:'y',supplier_id:'s',name:'Baby Alpaca',fiber:'Baby alpaca',composition:'100% Baby Alpaca',title:'2/28'}],colors:[{id:'c',yarn_id:'y',name:'Rojo',code:'201'}],photos:[{id:'p',active:true,rights_confirmed:true,verification_status:'verified',source_identity:identity,storage_full:'private/full.webp',storage_thumb:'private/thumb.webp'}]});
+
+test('la relación inventario/color existe sin foto y refleja el nombre actualizado de la misma ficha',()=>{
+ const data=seed();data.photos=[];
+ assert.equal(inventoryColorRecord(item,data).color.id,'c');assert.equal(inventoryColorRecord(item,data).photo,undefined);
+ assert.equal(inventoryColorMatches(item,data).length,1);
+ data.colors[0].name='Rojo granate';assert.equal(inventoryColorRecord(item,data).color.name,'Rojo granate');
+ assert.equal(inventoryColorMatches({...item,supplier:'Michell'},data).length,0);
+});
 
 test('inventario usa la fotografía verificada del proveedor, hilo, composición, título y código exactos',()=>{
  assert.equal(inventoryColorPhoto(item,seed()).photo.id,'p');
