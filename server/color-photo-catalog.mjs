@@ -1,5 +1,6 @@
 import {createHash,randomUUID} from 'node:crypto';
 import sharp from 'sharp';
+import {normalizeTextileData} from '../src/textile-catalog.mjs';
 import {limitedBuffer} from './textile-auth.mjs';
 import {savePhoto} from './photo-storage.mjs';
 const digest=v=>createHash('sha256').update(typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v)).digest('hex');
@@ -56,7 +57,7 @@ export async function sourceResult(c,key,source,{authorized=false}={}){
  }catch(e){result={error:e.message,checked_at:new Date().toISOString()};}
  await c.db('textile_photo_sources?on_conflict=stage,source_key',{method:'POST',service:true,merge:true,body:{stage:c.stage,source_key:key,checked_at:new Date().toISOString(),result}});return result;
 }
-export async function records(c){const [colors,yarns,suppliers,photos]=await Promise.all(['textile_colors','textile_yarns','textile_suppliers','textile_photos'].map(t=>c.db(t+'?stage=eq.'+c.stage+'&deleted_at=is.null&limit=10000',{service:!!c.cron})));return {colors:colors.filter(x=>x.active!==false),yarns:yarns.filter(x=>x.active!==false),suppliers:suppliers.filter(x=>x.active!==false),photos};}
+export async function records(c){const [colors,yarns,suppliers,photos]=await Promise.all(['textile_colors','textile_yarns','textile_suppliers','textile_photos'].map(t=>c.db(t+'?stage=eq.'+c.stage+'&deleted_at=is.null&limit=10000',{service:!!c.cron})));return normalizeTextileData({colors:colors.filter(x=>x.active!==false),yarns:yarns.filter(x=>x.active!==false),suppliers:suppliers.filter(x=>x.active!==false),photos});}
 export function rowIdentity(r,color){const yarn=r.yarns.find(y=>y.id===color.yarn_id)||{},supplier=r.suppliers.find(s=>s.id===yarn.supplier_id)||{};return identity(color,yarn,supplier);}
 export async function photoReport(c,r){r||=await records(c);const checks=await c.db('textile_photo_checks?stage=eq.'+c.stage+'&limit=10000');const rows=r.colors.map(color=>{const i=rowIdentity(r,color),p=r.photos.find(p=>p.color_id===color.id&&p.active&&p.rights_confirmed&&p.verification_status==='verified'&&identityKey(p.source_identity)===identityKey(i)),check=checks.find(x=>x.color_id===color.id&&x.identity_key===identityKey(i));return {id:color.id,name:color.name,...i,verified:!!p,checked_at:check?.checked_at||p?.source_checked_at||null,status:p?'verified':check?.status||'pending',reason:p?'Fotografía verificada y almacenada.':check?.reason||sourceMatch(i).reason||'Falta consultar la fuente oficial y documentar la autorización de uso.',candidates:p?[]:check?.candidates||[]};});
  return {total:rows.length,found:rows.filter(r=>r.candidates.length||r.verified).length,verified:rows.filter(r=>r.verified).length,pending:rows.filter(r=>!r.verified).length,manual:rows.filter(r=>!r.verified&&!r.candidates.length).length,errors:rows.filter(r=>r.status==='error').length,rows};

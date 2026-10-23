@@ -11,12 +11,12 @@ test('la relación inventario/color existe sin foto y refleja el nombre actualiz
  assert.equal(inventoryColorRecord(item,data).color.id,'c');assert.equal(inventoryColorRecord(item,data).photo,undefined);
  assert.equal(inventoryColorMatches(item,data).length,1);
  data.colors[0].name='Rojo granate';assert.equal(inventoryColorRecord(item,data).color.name,'Rojo granate');
- assert.equal(inventoryColorMatches({...item,supplier:'Michell'},data).length,0);
+ assert.equal(inventoryColorMatches({...item,commercial_name:'MUHU',supplier:'INCA TOPS'},data).length,0);
 });
 
 test('inventario usa la fotografía verificada del proveedor, hilo, composición, título y código exactos',()=>{
  assert.equal(inventoryColorPhoto(item,seed()).photo.id,'p');
- for(const change of [{supplier:'Michell'},{commercial_name:'Kori'},{composition:'100% Royal Alpaca'},{yarn_title:'2/16'},{color_code:'0201'},{color_code:''},{supplier:''}])assert.equal(inventoryColorPhoto({...item,...change},seed()),null);
+ for(const change of [{supplier:'INCA TOPS',commercial_name:'MUHU'},{commercial_name:'Kori'},{composition:'100% Royal Alpaca'},{yarn_title:'2/16'},{color_code:'0201'},{color_code:''}])assert.equal(inventoryColorPhoto({...item,...change},seed()),null);
  assert.equal(inventoryColorPhoto({...item,color:'Nombre corregido'},seed()).photo.id,'p');
 });
 test('inventario no muestra imágenes pendientes, eliminadas, de identidad anterior ni ambiguas',()=>{

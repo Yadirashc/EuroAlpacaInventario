@@ -1,11 +1,13 @@
 import {sameVariant,verifiedPhoto} from './photo-identity.mjs';
 import {displayYarnTitle} from './yarn.mjs';
+import {canonicalInventoryItem,catalogColorGroups} from './textile-catalog.mjs';
 
 // Coincidencia técnica completa: nunca inferir una fotografía solo por el nombre del color.
 export function inventoryColorMatches(item,data){
+ item=canonicalInventoryItem(item);
  const identity={provider:item.supplier,yarn:item.commercial_name,code:item.color_code,composition:item.composition,title:displayYarnTitle(item.yarn_title),fiber:item.material};
  const matches=[];
- for(const color of data.colors){
+ for(const color of catalogColorGroups(data.colors,data.yarns)){
   if(color.active===false||color.deleted_at)continue;
   const yarn=data.yarns.find(row=>row.id===color.yarn_id&&row.active!==false&&!row.deleted_at);
   const supplier=yarn&&data.suppliers.find(row=>row.id===yarn.supplier_id&&row.active!==false&&!row.deleted_at);

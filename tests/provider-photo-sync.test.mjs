@@ -1,3 +1,4 @@
+import {normalizeTextileData} from '../src/textile-catalog.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {extractPhotoCandidates,providerURL,selectPhotoPilot,syncProviderPhotos} from '../server/provider-photo-sync.mjs';
@@ -30,9 +31,9 @@ test('prueba de cinco registros reparte proveedores y no consulta ni descarga si
 });
 test('una fuente autorizada guarda la variante exacta y reutiliza la fotografía ya almacenada',async()=>{
  const supplier={id:'s',name:'INCATOPS'},yarn={id:'y',supplier_id:'s',name:'MUHU',title:'2/28',composition:'100% baby alpaca',fiber:'Baby alpaca'},color={id:'c',yarn_id:'y',code:'8080',name:'Color de prueba'};
- const original=identity(color,yarn,supplier),setting={...config,yarn_id:'y',identity_key:identityKey({...original,color_id:undefined,code:undefined}),permission_reference:'Permiso ficticio de prueba automatizada',allow_lookup:true,allow_download:true,auto_confirm:true,updated_at:'2026-01-01'},photos=[],checks=[],sources=[];
+ const normalized=normalizeTextileData({colors:[color],yarns:[yarn],suppliers:[supplier],photos:[]}),original=identity(color,normalized.yarns[0],normalized.suppliers[0]),setting={...config,yarn_id:'y',identity_key:identityKey({...original,color_id:undefined,code:undefined}),permission_reference:'Permiso ficticio de prueba automatizada',allow_lookup:true,allow_download:true,auto_confirm:true,updated_at:'2026-01-01'},photos=[],checks=[],sources=[];
  const c={stage:'production',url:'https://storage.example.test',key:'test-only',profile:{id:'admin'},db:async(path,opts={})=>{
-  if(path.startsWith('rpc/confirm_color_photo'))return opts.body.p_photo;
+  if(path.startsWith('rpc/confirm_color_photo')){photos.push(opts.body.p_photo);return opts.body.p_photo;}
   if(opts.method){if(path.startsWith('textile_photo_checks'))checks.push(opts.body);if(path.startsWith('textile_photo_sources'))sources.push(opts.body);return opts.body;}
   if(path.startsWith('textile_photo_sources')){if(path.includes('like.photo-config'))return [{result:{config:setting}}];if(path.includes('eq.photo-page:'))return [{checked_at:new Date().toISOString(),result:{html:html(),robots:'User-agent: *\nAllow: /'}}];return sources.filter(row=>row.source_key==='photo-pilot');}
   if(path.startsWith('textile_photo_checks'))return checks;
