@@ -69,12 +69,13 @@ export async function discoverPhotos(c){const r=await records(c),cache=new Map()
  }
  if(checks.length)await c.db('textile_photo_checks?on_conflict=stage,color_id',{method:'POST',service:true,merge:true,body:checks});return photoReport(c,r);
 }
-export async function colorVerification(c,b){if(!b.color_id)return {};
- if(!b.exact_confirmed||!b.rights_confirmed||String(b.permission_reference||'').trim().length<5)throw new Error('Confirma proveedor, hilo, código y composición e indica la autorización de uso o la autoría de la fotografía.');
+export async function colorVerification(c,b,{manual=false}={}){if(!b.color_id)return {};
+ if(!b.exact_confirmed)throw new Error('Confirma que la fotografía corresponde al proveedor, hilo y color seleccionado.');
+ if(!manual&&(!b.rights_confirmed||String(b.permission_reference||'').trim().length<5))throw new Error('Indica la autorización de uso o la autoría de la fotografía del proveedor.');
  const r=await records(c),color=r.colors.find(x=>x.id===b.color_id&&x.active);if(!color)throw new Error('El color ya no está disponible.');const i=rowIdentity(r,color);if(!i.code||!i.composition||!i.title)throw new Error('Completa y comprueba el código, composición y título del registro antes de verificar su fotografía.');
  if(b.yarn_id&&b.yarn_id!==i.yarn_id)throw new Error('El hilo seleccionado no corresponde al color.');
  if(r.photos.some(p=>p.color_id===color.id&&p.active&&p.verification_status==='verified'&&identityKey(p.source_identity)===identityKey(i)))throw new Error('Este color ya tiene una fotografía verificada. Evita duplicarla.');
- return {yarn_id:i.yarn_id,source_identity:i,verification_status:'verified',verified_at:new Date().toISOString(),verified_by:c.profile.id,source_checked_at:new Date().toISOString(),permission_reference:String(b.permission_reference).trim().slice(0,1500)};
+ return {yarn_id:i.yarn_id,source_identity:i,verification_status:'verified',verified_at:new Date().toISOString(),verified_by:c.profile.id,source_checked_at:new Date().toISOString(),permission_reference:manual?'Carga manual de la administradora; sin declaración de autorización de uso.':String(b.permission_reference).trim().slice(0,1500)};
 }
 export async function confirmPhoto(c,b){const verification=await colorVerification(c,b),[check]=await c.db('textile_photo_checks?stage=eq.'+c.stage+'&color_id=eq.'+encodeURIComponent(b.color_id));if(!check||check.identity_key!==identityKey(verification.source_identity))throw new Error('El registro cambió. Actualiza y revisa nuevamente la coincidencia.');const candidate=check.candidates[Number(b.candidate)];if(!candidate)throw new Error('Selecciona una coincidencia de la revisión oficial.');
  const match=sourceMatch(verification.source_identity),[cached]=await c.db('textile_photo_sources?stage=eq.'+c.stage+'&source_key=eq.'+match.key,{service:true});

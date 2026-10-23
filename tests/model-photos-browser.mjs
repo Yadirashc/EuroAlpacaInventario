@@ -15,7 +15,7 @@ try{
   await page.locator('[data-tab=photos]').click();await page.locator('[data-t-action=upload]').click();
   await page.locator('[name=file]').setInputFiles('data/model-photos/ACPE08-0.webp');
   await page.locator('[name=name]').fill('ACPE08 / '+n);await page.locator('[name=model_code]').selectOption('PE08');
-  await page.locator('[name=visibility]').selectOption('team');await page.locator('[name=rights_confirmed]').check();await page.locator('dialog button[type=submit]').click();
+  await page.locator('[name=visibility]').selectOption('team');assert.equal(await page.locator('[name=rights_confirmed]').count(),0);await page.locator('dialog button[type=submit]').click();
   await page.waitForFunction(()=>!document.querySelector('dialog[open]'));
  }
  await page.locator('[data-tab=models]').click();
