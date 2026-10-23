@@ -18,6 +18,6 @@ export function allinBreakdown(rows){
 export function groupAllinRows(rows){
  const members=uniqueRows(rows.filter(i=>!i.archived&&isAllin(i)));
  if(!members.length)return rows;
- let emitted=false;return rows.flatMap(i=>{if(!isAllin(i))return [i];if(emitted)return [];emitted=true;return allinBreakdown(members).map((g,n)=>({...g.items[0],id:'allin-split-'+n,name:'Allin / Cancas',quantity:g.quantity,production_state:g.production_state,allin_group:g.items,allin_unknown:g.unknown,allin_sold:g.location==='Vendida'?g.quantity:0}));});
+ let emitted=false;return rows.flatMap(i=>{if(!isAllin(i))return [i];if(emitted)return [];emitted=true;return allinBreakdown(members).map((g,n)=>({...g.items[0],id:'allin-split-'+n,name:'Allin',quantity:g.quantity,production_state:g.production_state,allin_group:g.items,allin_unknown:g.unknown,allin_sold:g.location==='Vendida'?g.quantity:0}));});
 }
 export const expandAllinRows=rows=>rows.flatMap(i=>i.allin_group||[i]);
