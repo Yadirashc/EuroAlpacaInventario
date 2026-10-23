@@ -25,5 +25,10 @@
       "path": "/api/textile-cron",
       "schedule": "0 7 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "api/textile.js": {
+      "includeFiles": "node_modules/@jsquash/jxl/codec/dec/jxl_dec.wasm"
+    }
+  }
 }
