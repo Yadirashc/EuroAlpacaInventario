@@ -2,6 +2,8 @@
 
 ## Desglose por ubicación, color y talla — 23/10/2026
 
+Publicado y verificado en el dominio oficial: despliegue `dpl_FN9rcoUhcVAnpm9EWvpnDxySm3Pt`, READY, código `30bb62e775fe6effb3f2a4646a6b177f1b38c42b`. Pasaron 46 pruebas, compilación y prueba de navegador local y publicada. La lectura autenticada de los 297 registros de inventario coincide exactamente antes y después: SHA-256 `a24044783d2d5bef8afc9136dbdba0287ae33f35530f1966b1ab390b9546e351`. La ficha real quedó abierta en Chrome con 93 España, 7 Lima y 5 Muestras / revisión.
+
 Allin se muestra en entradas separadas por ubicación, color y talla, manteniendo distintos materiales y composiciones separados. Los registros que coinciden en esos campos se presentan en una sola entrada con sus cantidades sumadas; los distintos acabados se conservan al consultar los registros originales. La ficha completa tiene secciones por ubicación y un selector para consultar solo una ubicación. No se asigna talla única a los registros «No califica».
 
 La lectura previa actual contiene 33 registros activos de Allin y 105 unidades: España 93, Lima 7, Muestras / revisión 5. El desglose tiene 23 grupos, incluidos los registros de cantidad cero. Estos totales son una referencia de la comprobación; la interfaz calcula siempre los valores actuales. El cambio es de presentación: no escribe en inventario, movimientos ni historial.
