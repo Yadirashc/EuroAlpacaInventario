@@ -1,5 +1,7 @@
 # Sincronización de fotografías de proveedores
 
+Publicado el 23/10/2026 en https://euroalpaca-inventario.vercel.app/ con `dpl_8cVSYdhUeVrUUi9Jci5qZW8NERaX`, READY, código `12c269ee115df0a0cd815216462d74db717d288d`. Se comprobaron los cuatro archivos públicos publicados y la interfaz con datos aislados sobre el dominio oficial. Los endpoints de reporte, configuración y resolución devolvieron 401 sin sesión, como corresponde. No se ejecutó una carga real de fotografías ni una sincronización masiva: no hay permiso de reutilización documentado ni sesión conectada a producción. La migración de programación no se aplicó a producción.
+
 La ampliación usa `textile_colors`, `textile_yarns`, `textile_suppliers`, `textile_photos`, `textile_photo_checks`, `textile_photo_sources`, el bucket privado `textile-private` y el historial existente. No crea páginas, proveedores, hilos ni colores nuevos, ni escribe cantidades de prendas.
 
 En **Conexiones y actualización** están **Sincronizar fotografías de proveedores** y **Configurar fuente de fotografías**. Cada fuente se vincula a un hilo existente con producto, enlace, método, evidencia del permiso, vigencia y opciones de carga automática. La autorización de consulta y la de almacenamiento se registran por separado. No se deduce un permiso de un `robots.txt` permisivo ni de una página pública.
