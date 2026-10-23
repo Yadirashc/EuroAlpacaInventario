@@ -1,5 +1,15 @@
 # Ficha única Allin / Cancas
 
+## Desglose por ubicación, color y talla — 23/10/2026
+
+Allin se muestra en entradas separadas por ubicación, color y talla, manteniendo distintos materiales y composiciones separados. Los registros que coinciden en esos campos se presentan en una sola entrada con sus cantidades sumadas; los distintos acabados se conservan al consultar los registros originales. La ficha completa tiene secciones por ubicación y un selector para consultar solo una ubicación. No se asigna talla única a los registros «No califica».
+
+La lectura previa actual contiene 33 registros activos de Allin y 105 unidades: España 93, Lima 7, Muestras / revisión 5. El desglose tiene 23 grupos, incluidos los registros de cantidad cero. Estos totales son una referencia de la comprobación; la interfaz calcula siempre los valores actuales. El cambio es de presentación: no escribe en inventario, movimientos ni historial.
+
+Validación de navegador: `node tests/allin-split-browser.mjs`. Se puede utilizar una copia privada del inventario con `ALLIN_FIXTURE=data/allin-split-before-20261023.json`. Comprueba sumas por ubicación, agrupación de muestras con distinto acabado, acceso a registros, CSV, móvil y ausencia de escrituras.
+
+## Publicación anterior
+
 Publicada el 22/10/2026 en https://euroalpaca-inventario.vercel.app/, despliegue `dpl_dw2fT1gAyETeVJ9zJLpZxq7svgJ9`, READY, código `fabdd8434cd2fec9b7d2c92eeb64d1d4d147b1f5`. El código servido y la ficha del dominio oficial se comprobaron con datos aislados. La comparación integral del inventario antes/después coincide: 297 registros, 398 unidades conocidas, hash `32ea884d99b297afeea6f06d02d733ab`. Los 34 registros Allin y todos sus movimientos, operaciones e historial permanecen idénticos.
 
 Allin, Cancas y Bufanda Cancas se reúnen en una sola ficha de modelo. En Inventario, tanto la vista resumida como la vista Excel presentan una entrada agrupada dentro de los filtros y la hoja seleccionados. Abrirla muestra el total completo del modelo, sumas por ubicación y el desglose por material, composición, color, talla y ubicación.

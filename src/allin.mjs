@@ -9,15 +9,15 @@ export function allinTotals(rows){
 export function allinBreakdown(rows){
  const groups=new Map();
  for(const i of uniqueRows(rows).filter(i=>!i.archived)){
-  const key=JSON.stringify([i.material,i.composition,i.color,i.size,i.location].map(normalize));
-  if(!groups.has(key))groups.set(key,{material:i.material,composition:i.composition,color:i.color,size:i.size,location:i.location,quantity:0,unknown:0,items:[]});
-  const group=groups.get(key);group.quantity+=i.quantity??0;group.unknown+=i.quantity==null?1:0;group.items.push(i);
+  const key=JSON.stringify([i.location,i.material,i.composition,i.color,i.size].map(normalize));
+  if(!groups.has(key))groups.set(key,{material:i.material,composition:i.composition,color:i.color,size:i.size,location:i.location,production_state:i.production_state,quantity:0,unknown:0,items:[]});
+  const group=groups.get(key);group.quantity+=i.quantity??0;group.unknown+=i.quantity==null?1:0;group.items.push(i);group.production_state=new Set(group.items.map(row=>row.production_state||'Sin registrar')).size>1?'Varios acabados (ver registros)':i.production_state;
  }
- return [...groups.values()].sort((a,b)=>a.material.localeCompare(b.material,'es')||a.color.localeCompare(b.color,'es')||a.size.localeCompare(b.size,'es')||a.location.localeCompare(b.location,'es'));
+ return [...groups.values()].sort((a,b)=>String(a.location||'').localeCompare(String(b.location||''),'es')||String(a.color||'').localeCompare(String(b.color||''),'es')||String(a.size||'').localeCompare(String(b.size||''),'es')||String(a.material||'').localeCompare(String(b.material||''),'es')||String(a.production_state||'').localeCompare(String(b.production_state||''),'es'));
 }
 export function groupAllinRows(rows){
  const members=uniqueRows(rows.filter(i=>!i.archived&&isAllin(i)));
  if(!members.length)return rows;
- let emitted=false;return rows.flatMap(i=>{if(!isAllin(i))return [i];if(emitted)return [];emitted=true;const totals=allinTotals(members);return [{...members[0],id:'allin-unified',name:'Allin / Cancas',quantity:totals.quantity,allin_group:members,allin_unknown:totals.unknown,allin_sold:totals.sold}];});
+ let emitted=false;return rows.flatMap(i=>{if(!isAllin(i))return [i];if(emitted)return [];emitted=true;return allinBreakdown(members).map((g,n)=>({...g.items[0],id:'allin-split-'+n,name:'Allin / Cancas',quantity:g.quantity,production_state:g.production_state,allin_group:g.items,allin_unknown:g.unknown,allin_sold:g.location==='Vendida'?g.quantity:0}));});
 }
 export const expandAllinRows=rows=>rows.flatMap(i=>i.allin_group||[i]);
