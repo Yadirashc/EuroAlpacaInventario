@@ -1,5 +1,11 @@
 # Ficha única Allin / Cancas
 
+## Formato común de Allin — 23/10/2026
+
+Publicado en el dominio oficial con `dpl_Bfx5WYNfs71Paxuv7MQxVn7Q2pxi`, READY, código `2b5c3ff3cd8e1353780b6bb363ea644879d7672d`. Se verificaron los tres módulos servidos, compilación, pruebas de Allin y navegador local/publicado. En Chrome real las filas muestran «Allin» y la ubicación sin texto adicional. El hash de los 297 registros de inventario permanece `a24044783d2d5bef8afc9136dbdba0287ae33f35530f1966b1ab390b9546e351`.
+
+El nombre visible es «Allin». Las filas usan el formato habitual de modelo/código, material, color, talla, ubicación, existencias, precio y disponibilidad. La columna Ubicación contiene únicamente la ubicación, sin estado de acabado. La vista Excel mantiene sus columnas habituales y las cantidades agrupadas. Los acabados siguen disponibles en su campo de detalle. No se modifican registros ni cantidades.
+
 ## Desglose por ubicación, color y talla — 23/10/2026
 
 Publicado y verificado en el dominio oficial: despliegue `dpl_FN9rcoUhcVAnpm9EWvpnDxySm3Pt`, READY, código `30bb62e775fe6effb3f2a4646a6b177f1b38c42b`. Pasaron 46 pruebas, compilación y prueba de navegador local y publicada. La lectura autenticada de los 297 registros de inventario coincide exactamente antes y después: SHA-256 `a24044783d2d5bef8afc9136dbdba0287ae33f35530f1966b1ab390b9546e351`. La ficha real quedó abierta en Chrome con 93 España, 7 Lima y 5 Muestras / revisión.
