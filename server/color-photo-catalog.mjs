@@ -27,10 +27,10 @@ export function sourceMatch(i){
  if(key==='incatops'&&comp!=='100 royal alpaca')return {reason:'La composición no coincide con 100% royal alpaca.'};
  return {key,source,code:String(i.code).trim().toUpperCase().replace(key==='itessa'?/^NU[\s-]*/:key==='itessaBaby'?/^BA[\s-]*/:/^$/,''),review:key==='itessa'?'El sitio indica algodón sin precisar Tangüis. Se requiere comprobar ese subtipo en documentación del proveedor antes de confirmar.':''};
 }
-export function officialURL(value){const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!['itessa.com.pe','www.itessa.com.pe','michell.com.pe','www.michell.com.pe','incatops.com','www.incatops.com'].includes(u.hostname))throw new Error('La fuente redirigió a una dirección que no se pudo validar como oficial. Requiere revisión manual.');return u;}
-async function safeFetch(url,max=1_500_000){let u=officialURL(url);for(let n=0;n<4;n++){
+export function officialURL(value){const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!['itessa.com.pe','www.itessa.com.pe','michell.com.pe','www.michell.com.pe','incatops.com','www.incatops.com','stockserviceessentials.com','www.stockserviceessentials.com'].includes(u.hostname))throw new Error('La fuente redirigió a una dirección que no se pudo validar como oficial. Requiere revisión manual.');return u;}
+export async function safeFetch(url,max=1_500_000){let u=officialURL(url);const host=u.hostname.replace(/^www\./,'');for(let n=0;n<4;n++){
  const r=await fetch(u,{redirect:'manual',signal:AbortSignal.timeout(6500),headers:{'User-Agent':'EuroAlpaca-CatalogReview/1.0'}});
- if([301,302,303,307,308].includes(r.status)){u=officialURL(new URL(r.headers.get('location'),u).href);continue;}
+ if([301,302,303,307,308].includes(r.status)){u=officialURL(new URL(r.headers.get('location'),u).href);if(u.hostname.replace(/^www\./,'')!==host)throw new Error('La fuente redirige fuera del proveedor original. Requiere revisión manual.');continue;}
  if(r.status===429)throw new Error('HTTP 429: el proveedor limita las consultas. Se conserva una pausa de 24 horas; no se intenta eludirla.');
  if(!r.ok)throw Object.assign(new Error('La fuente oficial respondió HTTP '+r.status+'.'),{status:r.status});
  const declared=Number(r.headers.get('content-length'));if(declared>max)throw new Error('La fuente supera el tamaño permitido.');
@@ -44,19 +44,20 @@ export function imageCandidates(html,match){
  const raw=attrs['data-src']||attrs.src;if(!raw||raw.startsWith('data:'))continue;try{const url=officialURL(new URL(raw,match.source.url).href).href;if(!found.some(c=>c.image_url===url))found.push({image_url:url,source_url:match.source.url,code:match.code,review:''});}catch{}
  }return found.slice(0,2);
 }
-async function sourceResult(c,key,source){
+export async function sourceResult(c,key,source,{authorized=false}={}){
  const [cached]=await c.db('textile_photo_sources?stage=eq.'+c.stage+'&source_key=eq.'+key,{service:true});
  if(cached&&Date.now()-new Date(cached.checked_at).getTime()<86400_000)return cached.result;
+ if(!authorized)return {error:'Falta registrar autorización para consultar automáticamente esta fuente. Puedes revisar el catálogo oficial e importar fotografías autorizadas.',checked_at:new Date().toISOString(),permission_pending:true};
  let result;try{
   const u=officialURL(source.url);let robots;try{robots=await safeFetch(u.origin+'/robots.txt',100_000);}catch(e){if(e.status!==404)throw e;robots={data:Buffer.from('User-agent: *\nAllow: /')};}
   if(!robotsAllows(robots.data.toString(),u.pathname))throw new Error('La fuente no permite consultar esta ruta mediante robots.txt.');
-  const page=await safeFetch(source.url);const html=page.data.toString();if(/account suspended|access denied|captcha|cf-chl-/i.test(html))throw new Error('La fuente oficial está restringida o suspendida. Se requiere revisión manual.');
+  const page=await safeFetch(source.url);const html=page.data.toString(),title=html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]||'';if(/account suspended|access denied|captcha|just a moment|verify (?:you|that)/i.test(title)||/id=["'](?:challenge-form|cf-chl-widget)/i.test(html))throw new Error('La fuente oficial está restringida o suspendida. Se requiere revisión manual.');
   result={html,checked_at:new Date().toISOString(),robots:robots.data.toString()};
  }catch(e){result={error:e.message,checked_at:new Date().toISOString()};}
  await c.db('textile_photo_sources?on_conflict=stage,source_key',{method:'POST',service:true,merge:true,body:{stage:c.stage,source_key:key,checked_at:new Date().toISOString(),result}});return result;
 }
-async function records(c){const [colors,yarns,suppliers,photos]=await Promise.all(['textile_colors','textile_yarns','textile_suppliers','textile_photos'].map(t=>c.db(t+'?stage=eq.'+c.stage+'&deleted_at=is.null&limit=10000')));return {colors,yarns,suppliers,photos};}
-function rowIdentity(r,color){const yarn=r.yarns.find(y=>y.id===color.yarn_id)||{},supplier=r.suppliers.find(s=>s.id===yarn.supplier_id)||{};return identity(color,yarn,supplier);}
+export async function records(c){const [colors,yarns,suppliers,photos]=await Promise.all(['textile_colors','textile_yarns','textile_suppliers','textile_photos'].map(t=>c.db(t+'?stage=eq.'+c.stage+'&deleted_at=is.null&limit=10000',{service:!!c.cron})));return {colors:colors.filter(x=>x.active!==false),yarns:yarns.filter(x=>x.active!==false),suppliers:suppliers.filter(x=>x.active!==false),photos};}
+export function rowIdentity(r,color){const yarn=r.yarns.find(y=>y.id===color.yarn_id)||{},supplier=r.suppliers.find(s=>s.id===yarn.supplier_id)||{};return identity(color,yarn,supplier);}
 export async function photoReport(c,r){r||=await records(c);const checks=await c.db('textile_photo_checks?stage=eq.'+c.stage+'&limit=10000');const rows=r.colors.map(color=>{const i=rowIdentity(r,color),p=r.photos.find(p=>p.color_id===color.id&&p.active&&p.rights_confirmed&&p.verification_status==='verified'&&identityKey(p.source_identity)===identityKey(i)),check=checks.find(x=>x.color_id===color.id&&x.identity_key===identityKey(i));return {id:color.id,name:color.name,...i,verified:!!p,checked_at:check?.checked_at||p?.source_checked_at||null,status:p?'verified':check?.status||'pending',reason:p?'Fotografía verificada y almacenada.':check?.reason||sourceMatch(i).reason||'Falta consultar la fuente oficial y documentar la autorización de uso.',candidates:p?[]:check?.candidates||[]};});
  return {total:rows.length,found:rows.filter(r=>r.candidates.length||r.verified).length,verified:rows.filter(r=>r.verified).length,pending:rows.filter(r=>!r.verified).length,manual:rows.filter(r=>!r.verified&&!r.candidates.length).length,errors:rows.filter(r=>r.status==='error').length,rows};
 }
