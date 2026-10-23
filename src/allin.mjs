@@ -1,4 +1,5 @@
 import {normalize} from './domain.mjs';
+import {compareInventory,compareText} from './inventory-order.mjs';
 
 export const isAllin=i=>normalize(i.category).startsWith('BUFAND')&&/^(?:BUFANDAS?\s+(?:DE\s+)?)?(?:ALLIN|CANCAS)(?:\s*\/\s*(?:ALLIN|CANCAS))?$/.test(normalize(i.name));
 export function uniqueRows(rows){const seen=new Set();return rows.filter(i=>{if(seen.has(i.id))return false;seen.add(i.id);return true;});}
@@ -13,7 +14,7 @@ export function allinBreakdown(rows){
   if(!groups.has(key))groups.set(key,{material:i.material,composition:i.composition,color:i.color,size:i.size,location:i.location,production_state:i.production_state,quantity:0,unknown:0,items:[]});
   const group=groups.get(key);group.quantity+=i.quantity??0;group.unknown+=i.quantity==null?1:0;group.items.push(i);group.production_state=new Set(group.items.map(row=>row.production_state||'Sin registrar')).size>1?'Varios acabados (ver registros)':i.production_state;
  }
- return [...groups.values()].sort((a,b)=>String(a.location||'').localeCompare(String(b.location||''),'es')||String(a.color||'').localeCompare(String(b.color||''),'es')||String(a.size||'').localeCompare(String(b.size||''),'es')||String(a.material||'').localeCompare(String(b.material||''),'es')||String(a.production_state||'').localeCompare(String(b.production_state||''),'es'));
+ return [...groups.values()].sort((a,b)=>compareText(a.location,b.location)||compareInventory(a,b));
 }
 export function groupAllinRows(rows){
  const members=uniqueRows(rows.filter(i=>!i.archived&&isAllin(i)));
