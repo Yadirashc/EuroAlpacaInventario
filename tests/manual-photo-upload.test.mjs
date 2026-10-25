@@ -13,7 +13,7 @@ test('carga manual guarda un color sin casilla ni referencia de autorización y 
   if(url.includes('/textile_colors?'))return Response.json([{id:'c',active:true,yarn_id:'y',code:'8080',name:'Color'}]);
   if(url.includes('/textile_yarns?'))return Response.json([{id:'y',active:true,supplier_id:'s',name:'MUHU',composition:'100% Baby Alpaca',title:'2/28'}]);
   if(url.includes('/textile_suppliers?'))return Response.json([{id:'s',name:'Inca Tops'}]);
-  if(url.includes('/textile_photos?'))return Response.json([]);
+  if(url.includes('/textile_photos')&&options.method==='POST'){saved=JSON.parse(options.body);return Response.json([saved]);}if(url.includes('/textile_photos?'))return Response.json([]);if(url.includes('/textile_photo_sources'))return Response.json([]);
   if(url.includes('/storage/')){uploads++;return Response.json({});}
   if(url.includes('/rpc/confirm_color_photo')){saved=JSON.parse(options.body).p_photo;return Response.json(saved);}
   throw Error('Unexpected request: '+url);

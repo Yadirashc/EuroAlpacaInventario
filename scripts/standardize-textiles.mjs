@@ -14,7 +14,7 @@ export async function standardizeTextiles({url,key,stage='production',fetcher=fe
  const projected=normalizeTextileData({...before,requirements:[],folders:[]});
  let yarnsChanged=0,photosChanged=0,suppliersChanged=0,availabilityReset=0;
  for(const supplier of projected.suppliers){const old=before.suppliers.find(row=>row.id===supplier.id);if(old.active===false||old.deleted_at)continue;if(old.name!==supplier.name){await call('textile_suppliers?id=eq.'+supplier.id+'&stage=eq.'+stage,{method:'PATCH',body:{name:supplier.name}});suppliersChanged++;}}
- for(const yarn of projected.yarns){const old=before.yarns.find(row=>row.id===yarn.id);if(!yarn.catalog_key||old.active===false||old.deleted_at)continue;
+ for(const yarn of projected.yarns){const old=before.yarns.find(row=>row.id===yarn.id);if(!yarn.catalog_key||old.reference_key?.startsWith('independent-color|')||old.active===false||old.deleted_at)continue;
   const body={supplier_id:yarn.supplier_id,name:yarn.name,fiber:yarn.fiber,composition:yarn.composition,title:yarn.title,reference_key:'catalog-v1|'+yarn.catalog_key+'|'+(yarn.title||'pendiente')+'|'+yarn.id};
   if(Object.entries(body).every(([key,value])=>old[key]===value))continue;
   const saved=await call('textile_yarns?id=eq.'+yarn.id+'&stage=eq.'+stage,{method:'PATCH',body});if(saved.length!==1||Object.entries(body).some(([key,value])=>saved[0][key]!==value))throw new Error('No se pudo verificar el hilo actualizado '+yarn.id);yarnsChanged++;

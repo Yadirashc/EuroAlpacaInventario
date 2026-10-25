@@ -33,6 +33,7 @@ test('la copia histórica se unifica sin perder títulos, colores ni referencias
 test('unificación persistente conserva prendas y kg, respalda los registros y es idempotente',async()=>{
  const suppliers=[{id:'itessa',stage:'preview',code:'ITESSA',name:'Itessa'},{id:'inca',stage:'preview',code:'INCATOPS',name:'INCATOPS'}],yarns=textileCatalog.map(product=>({id:product.key,stage:'preview',supplier_id:product.providerCode==='ITESSA'?'itessa':'inca',name:product.name,fiber:product.fiber,composition:product.composition,title:'2/28',reference_key:product.key}));
  yarns.push({...yarns.find(y=>y.id==='cancas'),id:'cancas-antiguo',supplier_id:'inca',reference_key:'old-cancas'});
+ yarns.push({...yarns.find(y=>y.id==='muhu'),id:'personalizado',supplier_id:'itessa',name:'MUHU personalizado',reference_key:'independent-color|personalizado'});
  const colors=yarns.map(y=>({id:'color-'+y.id,stage:'preview',yarn_id:y.id,code:'201',name:'Rojo'})),stock=colors.map(c=>({id:'stock-'+c.id,stage:'preview',color_id:c.id,stock_kg:1.25}));
  const state={textile_suppliers:suppliers,textile_yarns:yarns,textile_colors:colors,textile_stock:stock,textile_photos:[],items:[{id:'item',quantity:7,material:'Original',notes:'Conservar'}],textile_sync_runs:[]};
  const before=structuredClone(state);let writes=0;
@@ -41,7 +42,8 @@ test('unificación persistente conserva prendas y kg, respalda los registros y e
   if(options.method==='PATCH'){const body=JSON.parse(options.body);for(const row of matches)Object.assign(row,body);writes++;return Response.json(matches);}
   matches=[...matches].sort((a,b)=>String(a.id).localeCompare(String(b.id)));const offset=Number(parsed.searchParams.get('offset')||0),limit=Number(parsed.searchParams.get('limit')||1000);return Response.json(matches.slice(offset,offset+limit));};
  const result=await standardizeTextiles({url:'https://example.test',key:'test-server-key',stage:'preview',fetcher});
- assert.equal(result.commercial_yarns,7);assert.equal(result.fiber_families,6);assert.equal(result.inventory_preserved,true);assert.equal(result.stock_preserved,true);
+ assert.equal(result.commercial_yarns,8);assert.equal(result.fiber_families,6);assert.equal(result.inventory_preserved,true);assert.equal(result.stock_preserved,true);
+ assert.deepEqual(state.textile_yarns.find(y=>y.id==='personalizado'),before.textile_yarns.find(y=>y.id==='personalizado'));
  assert.deepEqual(state.items,before.items);assert.deepEqual(state.textile_stock,before.textile_stock);assert.deepEqual(state.textile_colors.map(row=>[row.id,row.yarn_id]),before.textile_colors.map(row=>[row.id,row.yarn_id]));
  const backup=state.textile_sync_runs.find(row=>row.status==='Respaldo');assert.deepEqual(JSON.parse(backup.details).before.yarns,before.textile_yarns.toSorted((a,b)=>a.id.localeCompare(b.id)));
  const count=writes,repeat=await standardizeTextiles({url:'https://example.test',key:'test-server-key',stage:'preview',fetcher});assert.equal(repeat.already_applied,true);assert.equal(writes,count);
