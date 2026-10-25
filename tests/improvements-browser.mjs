@@ -23,6 +23,11 @@ try{
  await page.locator('[data-unified-edit]').click();
  assert.deepEqual(await page.locator('dialog [name=family] option').allTextContents(),['Neutros','Sólidos','Melange']);
  assert.match(await page.locator('.visual-linked-quantity').innerText(),/10 unidades/);
+ await page.locator('dialog [data-color-route=inventory]').click();
+ assert.match(await page.locator('.linked-color-context').innerText(),/Rojo/);
+ assert.match(await page.locator('.linked-color-context').innerText(),/10 unidades/);
+ await page.locator('nav [data-tab=textile]').click();
+ await page.locator('#textile-search').fill('8080');await page.locator('[data-unified-edit]').click();
  await page.locator('dialog [name=family]').selectOption('Melange');
  await page.locator('dialog [name=supplier_id]').selectOption({label:'ITESSA'});
  await page.locator('dialog [name=yarn_name]').fill('Hilo rojo independiente');
