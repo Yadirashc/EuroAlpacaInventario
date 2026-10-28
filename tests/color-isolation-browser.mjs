@@ -25,7 +25,10 @@ try{
  const close=()=>page.locator('dialog .close').click();
  const save=async()=>{await page.locator('#color-profile-form button[type=submit]').first().click();await page.locator('dialog').waitFor({state:'hidden'});};
  await open('a,b,c');assert.equal(await page.locator('[name=target_item_id]').count(),3);assert.equal(await page.locator('[name=target_item_id]:checked').count(),1);assert.equal(await page.locator('[name=target_item_id]:checked').inputValue(),'a');
+ await close();await page.locator('nav [data-tab=textile]').click();await page.locator('#textile-search').fill('BA - 201');await page.locator('[data-unified-edit]').first().click();
+ assert.equal(await page.locator('[name=target_item_id]').count(),3);assert.equal(await page.locator('[name=target_item_id]:checked').count(),1);
  await page.locator('[name=supplier_id]').selectOption({label:'INCA TOPS'});await save();
+ await page.locator('nav [data-tab=inventory]').click();
  await open('a');assert.equal(await page.locator('[name=code]').inputValue(),'BA - 201');assert.equal(await page.locator('[name=supplier_id] option:checked').innerText(),'INCA TOPS');await page.locator('[name=code]').fill('9001');await save();
  await open('b,c');assert.equal(await page.locator('[name=code]').inputValue(),'BA - 201');assert.equal(await page.locator('[name=supplier_id] option:checked').innerText(),'ITESSA');assert.equal(await page.locator('[name=target_item_id]:checked').inputValue(),'b');await page.locator('[name=code]').fill('8000');await save();
  await open('c');assert.equal(await page.locator('[name=code]').inputValue(),'BA - 201');assert.equal(await page.locator('[name=supplier_id] option:checked').innerText(),'ITESSA');await close();

@@ -2,6 +2,8 @@
 
 En Inventario, pulsar el nombre de un color abre la edición de los registros de esa fila. Si la fila agrupa varios registros, el formulario muestra casillas por prenda, talla, ubicación, fila de origen y cantidad; inicialmente solo se marca el primer registro. Los cambios se aplican exclusivamente a las casillas marcadas.
 
+La misma selección se muestra al editar desde Gestión textil una ficha que tiene prendas vinculadas. Este acceso también crea una copia para los registros elegidos, sin editar automáticamente todas las prendas que comparten la referencia.
+
 Una edición desde Inventario crea una ficha de color e hilo independiente de la referencia compartida. Las siguientes ediciones reutilizan esa copia mientras pertenezca exclusivamente a los registros elegidos. Si una copia pertenece a varias prendas y posteriormente se edita solo una, se crea otra copia. El nombre y código se guardan en los registros elegidos y su referencia explícita se conserva en `source_snapshot._textile_color_id`; los demás campos originales y las cantidades permanecen intactos.
 
 La edición de una ficha en Gestión textil actualiza únicamente su ID. Ya no actualiza sus alias ni todos los registros del grupo. Un hilo compartido se separa antes de modificarlo y las fichas independientes no vuelven a agruparse por coincidir en proveedor o código. Las referencias explícitas de las prendas se respetan sin coincidencias alternativas por nombre. Una copia exclusiva de una prenda no aparece como opción de color de otras prendas.
