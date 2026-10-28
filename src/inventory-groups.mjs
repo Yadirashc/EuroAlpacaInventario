@@ -8,7 +8,7 @@ export function groupInventoryRows(rows){
  for(const row of rows){
   if(row.allin_group||row.inventory_group||!row.name||!row.color||!row.location){result.push(row);continue;}
   if(seen.has(row.id))continue;seen.add(row.id);
-  const key=JSON.stringify([modelKey(row),isWayraSet(row)?keyText(row.category):'',materialCode(row),compositionKey(row.composition),keyText(row.color),keyText(row.size),keyText(row.location)]);
+  const key=JSON.stringify([modelKey(row),isWayraSet(row)?keyText(row.category):'',materialCode(row),compositionKey(row.composition),keyText(row.color),keyText(row.color_code),row.source_snapshot?._textile_color_id||'',keyText(row.size),keyText(row.location)]);
   if(!groups.has(key)){const group={...row,inventory_group:[row]};groups.set(key,group);result.push(group);}
   else groups.get(key).inventory_group.push(row);
  }

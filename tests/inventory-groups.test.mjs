@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {groupInventoryRows,expandInventoryRows} from '../src/inventory-groups.mjs';
 const base={name:'Hanaq',model_code:'HA41',category:'Chal',material:'Majestic',composition:'100% imperial alpaca',color:'Lacre',size:'NO CALIFICA',location:'España'};
+
+test('códigos de color y referencias individuales no se ocultan dentro de otra fila',()=>{
+ const rows=[{...base,id:'a',color_code:'100',quantity:1},{...base,id:'b',color_code:'200',quantity:2},{...base,id:'c',color_code:'100',quantity:3,source_snapshot:{_textile_color_id:'private-color'}}];
+ assert.equal(groupInventoryRows(rows).length,3);
+});
 test('Hanaq suma duplicados por modelo, color, talla y ubicación sin cambiar originales',()=>{
  const rows=[{...base,id:'a',quantity:5},{...base,id:'b',quantity:4},{...base,id:'c',color:'Mostaza',quantity:4},{...base,id:'d',color:'Mostaza',quantity:7}],before=structuredClone(rows);
  const grouped=groupInventoryRows(rows);assert.equal(grouped.length,2);assert.deepEqual(grouped.map(r=>r.quantity),[9,11]);assert.deepEqual(expandInventoryRows(grouped),rows);assert.deepEqual(rows,before);
