@@ -54,7 +54,7 @@ REVOKE ALL ON public.profiles,public.items,public.movements,public.audit_log FRO
 GRANT SELECT ON public.profiles,public.items,public.movements,public.audit_log TO authenticated;
 GRANT ALL ON public.profiles,public.items,public.movements,public.audit_log TO service_role;
 GRANT INSERT ON public.items TO authenticated;
-GRANT UPDATE(sku,model_code,name,category,description,material,commercial_name,composition,material_code,color,color_code,size,location,status,production_state,supplier,min_stock,notes,inventory_type,threads,yarn_title,gender,weight,production_weight,review_required,archived) ON public.items TO authenticated;
+GRANT UPDATE(sku,model_code,name,category,description,material,commercial_name,composition,material_code,color,color_code,size,location,status,production_state,supplier,min_stock,notes,inventory_type,threads,yarn_title,gender,weight,production_weight,review_required,archived,source_snapshot) ON public.items TO authenticated;
 REVOKE ALL ON FUNCTION public.handle_user(),public.audit_item() FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.record_movement(uuid,text,integer,text,text,uuid),public.transfer_stock(uuid,uuid,integer,text,uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.record_movement(uuid,text,integer,text,text,uuid),public.transfer_stock(uuid,uuid,integer,text,uuid) TO authenticated;
