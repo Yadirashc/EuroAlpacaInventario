@@ -1,46 +1,59 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import bmp from 'bmp-js';
-import {photoMime} from '../src/photo-formats.mjs';
+import {photoMime,PHOTO_MAX_BYTES} from '../src/photo-formats.mjs';
 import {decodePhotoUpload} from '../server/photo-upload.mjs';
-import {savePhoto} from '../server/photo-storage.mjs';
+import {preparePhotoUpload,consumePhotoUpload} from '../server/photo-transfer.mjs';
+import {uploadPhoto} from '../src/photo-transfer.mjs';
 
-test('reconoce extensiones sin MIME, JPG/JPEG y tipos alternativos de Windows y móviles',()=>{
- for(const [ext,mime] of Object.entries({jpg:'jpeg',jpeg:'jpeg',jfif:'jpeg',png:'png',gif:'gif',webp:'webp',avif:'avif',jxl:'jxl',heic:'heic',heif:'heif',tif:'tiff',tiff:'tiff',bmp:'bmp',svg:'svg+xml'})){
-  for(const type of ['','application/octet-stream'])assert.equal(photoMime({name:'foto.'+ext.toUpperCase(),type}),'image/'+mime);
- }
- for(const [type,mime] of Object.entries({'image/jpg':'image/jpeg','image/pjpeg':'image/jpeg','image/x-ms-bmp':'image/bmp','image/heic-sequence':'image/heic'}))assert.equal(photoMime({name:'foto',type}),mime);
- assert.equal(photoMime({name:'archivo.exe',type:'application/octet-stream'}),null);
- assert.equal(photoMime({name:'foto.jpg',type:'application/pdf'}),null);
+test('solo admite PNG, JPG/JPEG y JXL con MIME o extensión',()=>{
+ for(const [ext,mime] of Object.entries({jpg:'jpeg',jpeg:'jpeg',png:'png',jxl:'jxl'}))for(const type of ['','application/octet-stream'])assert.equal(photoMime({name:'foto.'+ext.toUpperCase(),type}),'image/'+mime);
+ assert.equal(photoMime({type:'image/jpg'}),'image/jpeg');
+ for(const ext of ['gif','tiff','bmp','heic','heif','svg','avif','webp'])assert.equal(photoMime({name:'foto.'+ext,type:''}),null);
 });
 
-test('convierte los formatos admitidos en fotografía y miniatura WebP con los colores correctos',async()=>{
- const fixtures=[];
- for(const format of ['jpeg','png','webp','avif','gif','tiff'])fixtures.push({mime:'image/'+format,bytes:await sharp({create:{width:3,height:2,channels:3,background:'#cc2244'}})[format]().toBuffer()});
- fixtures.push({mime:'image/svg+xml',bytes:Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="3" height="2"><rect width="3" height="2" fill="#cc2244"/></svg>')});
- fixtures.push({mime:'image/bmp',bytes:bmp.encode({width:3,height:2,data:Buffer.from(Array(6).fill([255,68,34,204]).flat())}).data});
- const original=global.fetch;
+test('acepta hasta 5 MB exactos de PNG y JPG y rechaza un byte adicional y otros contenidos',async()=>{
+ for(const format of ['png','jpeg']){
+  const photo=await sharp({create:{width:2,height:2,channels:3,background:'#cc2244'}})[format]().toBuffer();
+  const bytes=Buffer.concat([photo,Buffer.alloc(PHOTO_MAX_BYTES-photo.length)]);
+  assert.deepEqual(await decodePhotoUpload({mime_type:'image/'+format},bytes),bytes);
+  await assert.rejects(decodePhotoUpload({mime_type:'image/'+format},Buffer.concat([bytes,Buffer.alloc(1)])),/5 MB/);
+ }
+ const gif=await sharp({create:{width:2,height:2,channels:3,background:'#cc2244'}}).gif().toBuffer();
+ await assert.rejects(decodePhotoUpload({mime_type:'image/png'},gif),/No se pudo leer/);
+ await assert.rejects(decodePhotoUpload({mime_type:'image/gif'},gif),/PNG, JPG\/JPEG o JXL/);
+ await assert.rejects(decodePhotoUpload({mime_type:'image/png',data:'!!!!'}),/incompletos/);
+});
+
+test('carga directa de 5 MB usa un permiso privado, limita tamaño y limpia el archivo temporal',async()=>{
+ const original=global.fetch,calls=[],c={url:'https://example.test',key:'test',stage:'production',profile:{id:'admin'}};
+ global.fetch=async(url,options={})=>{
+  calls.push({url,options});
+  if(url.endsWith('/bucket/textile-uploads'))return Response.json({public:false,file_size_limit:5_000_000,allowed_mime_types:['application/octet-stream']});
+  if(url.includes('/object/upload/sign/'))return Response.json({url:'/object/upload/sign/test?token=limited'});
+  if(options.method==='DELETE')return Response.json({});
+  return new Response(Buffer.alloc(5_000_000));
+ };
  try{
-  for(const {mime,bytes} of fixtures){
-   const data=await decodePhotoUpload({mime_type:mime,data:bytes.toString('base64')}),uploads=[];
-   global.fetch=async(url,options)=>{uploads.push(options.body);return new Response('{}');};
-   await savePhoto({stage:'preview',url:'https://example.test',key:'test'},'format-test',data,{color:true});
-   assert.equal(uploads.length,2,mime);
-   for(const photo of uploads){
-    const meta=await sharp(photo).metadata();assert.equal(meta.format,'webp',mime);assert.equal(meta.width,3);assert.equal(meta.height,2);
-    const pixels=await sharp(photo).removeAlpha().raw().toBuffer();
-    for(let i=0;i<pixels.length;i+=3){assert.ok(Math.abs(pixels[i]-204)<12,mime+' red');assert.ok(Math.abs(pixels[i+1]-34)<12,mime+' green');assert.ok(Math.abs(pixels[i+2]-68)<12,mime+' blue');}
-   }
-  }
+  await assert.rejects(preparePhotoUpload(c,{mime_type:'image/png',size:5_000_001}),/5 MB/);assert.equal(calls.length,0);
+  const upload=await preparePhotoUpload(c,{mime_type:'image/png',size:5_000_000});
+  assert.match(upload.upload_path,/^production\/admin\//);
+  assert.equal((await consumePhotoUpload(c,upload.upload_path)).length,5_000_000);
+  assert.equal(calls.at(-1).options.method,'DELETE');
+  const n=calls.length;await assert.rejects(consumePhotoUpload({...c,profile:{id:'other'}},upload.upload_path),/inválida/);assert.equal(calls.length,n);
+  global.fetch=async(url,options={})=>{calls.push({url,options});return options.method==='DELETE'?Response.json({}):new Response(Buffer.alloc(5_000_001));};
+  await assert.rejects(consumePhotoUpload(c,upload.upload_path),/tamaño/);assert.equal(calls.at(-1).options.method,'DELETE');
  }finally{global.fetch=original;}
 });
 
-test('rechaza archivos corruptos, base64 inválido y dimensiones excesivas antes de guardar',async()=>{
- for(const mime of ['image/jpeg','image/heic','image/heif','image/tiff','image/gif','image/bmp','image/svg+xml'])await assert.rejects(decodePhotoUpload({mime_type:mime,data:Buffer.from('not an image').toString('base64')}),/No se pudo leer/);
- await assert.rejects(decodePhotoUpload({mime_type:'image/jpeg',data:'!!!!'}),/incompletos/);
- const bytes=bmp.encode({width:1,height:1,data:Buffer.from([255,0,0,255])}).data;bytes.writeUInt32LE(40_000_001,18);
- await assert.rejects(decodePhotoUpload({mime_type:'image/bmp',data:bytes.toString('base64')}),/megapíxeles/);
- const truncated=bmp.encode({width:1,height:1,data:Buffer.from([255,0,0,255])}).data.subarray(0,55);
- await assert.rejects(decodePhotoUpload({mime_type:'image/bmp',data:truncated.toString('base64')}),/No se pudo leer/);
+test('el navegador envía 5 MB directamente al almacenamiento y solo la ruta al servidor',async()=>{
+ const original=global.fetch,calls=[],file=new Blob([new Uint8Array(5_000_000)]);
+ global.fetch=async(url,options)=>{assert.equal(options.body,file);assert.equal(options.method,'PUT');return Response.json({});};
+ const api=async(action,body)=>{calls.push({action,body});return action==='prepare-upload'?{upload_path:'private-path',upload_url:'https://example.test/signed'}:{id:'saved'};};
+ try{
+  assert.deepEqual(await uploadPhoto(api,{name:'Foto'},file,'image/png'),{id:'saved'});
+  assert.equal(calls[0].body.size,5_000_000);assert.equal(calls[1].body.upload_path,'private-path');assert.equal(calls[1].body.data,undefined);
+  global.fetch=async()=>new Response('',{status:500});
+  await assert.rejects(uploadPhoto(api,{},file,'image/png'),/No se pudo subir/);assert.equal(calls.at(-1).action,'discard-upload');
+ }finally{global.fetch=original;}
 });

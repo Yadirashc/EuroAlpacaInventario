@@ -36,7 +36,7 @@ test('un JXL real conserva sus píxeles y produce foto y miniatura WebP privadas
 
 test('rechaza JXL falsos, incompletos y archivos demasiado grandes; conserva JPG y PNG',async()=>{
  for(const bytes of [Buffer.from('not a photo'),Buffer.from([255,10,0])])await assert.rejects(decodePhotoUpload({mime_type:'image/jxl',data:bytes.toString('base64')}),/JXL/);
- await assert.rejects(decodePhotoUpload({mime_type:'image/jxl',data:'a'.repeat(4_000_001)}),/3 MB/);
+ await assert.rejects(decodePhotoUpload({mime_type:'image/jxl',data:'a'.repeat(6_666_669)}),/5 MB/);
  for(const format of ['png','jpeg']){
   const buffer=await sharp({create:{width:3,height:2,channels:3,background:'#cc2244'}})[format]().toBuffer();
   assert.deepEqual(await decodePhotoUpload({mime_type:'image/'+format,data:buffer.toString('base64')}),buffer);
