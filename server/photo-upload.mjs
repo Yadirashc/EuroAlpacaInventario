@@ -27,7 +27,7 @@ export async function decodePhotoUpload(body,raw){
  }
  try{
   const meta=await sharp(bytes,{limitInputPixels:40_000_000}).metadata();
-  if(!['jpeg','png'].includes(meta.format)||'image/'+meta.format!==body.mime_type)throw new Error('Formato no admitido');
+  if(!['jpeg','png','webp'].includes(meta.format)||'image/'+meta.format!==body.mime_type)throw new Error('Formato no admitido');
   return bytes;
  }catch{throw new Error('No se pudo leer la imagen. Usa '+PHOTO_FORMATS+' y comprueba que el archivo esté completo.');}
 }

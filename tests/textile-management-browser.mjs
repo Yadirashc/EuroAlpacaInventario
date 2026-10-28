@@ -23,9 +23,9 @@ try{
  await page.locator('[name=email]').fill('qa@example.test');await page.locator('[name=password]').fill('qa-local');await page.locator('#login-form button').click();
  await page.locator('nav [data-tab=inventory]').click();await page.locator('#view-summary').click();
  const row=name=>page.locator('.inventory-panel tbody tr').filter({hasText:name}).first();
- const upload=async(name,color)=>{
+ const upload=async(name,color,format='png')=>{
   await row(name).locator('[data-inventory-model-photo]').click();
-  await page.locator('dialog [name=file]').setInputFiles({name:'modelo.png',mimeType:'image/png',buffer:await sharp({create:{width:20,height:20,channels:3,background:color}}).png().toBuffer()});
+  await page.locator('dialog [name=file]').setInputFiles({name:'modelo.'+format,mimeType:'image/'+format,buffer:await sharp({create:{width:20,height:20,channels:3,background:color}})[format]().toBuffer()});
   await page.locator('#textile-photo-form button[type=submit]').click();await page.locator('dialog').waitFor({state:'hidden'});
  };
  await upload('Modelo dos','#11aa33');
@@ -33,7 +33,7 @@ try{
  await upload('Modelo uno','#dd1144');
  await row('Modelo uno').locator('img.ready').waitFor();
  const originalID=await row('Modelo uno').locator('[data-private-photo]').getAttribute('data-private-photo'),originalURL=await row('Modelo uno').locator('[data-private-photo]').getAttribute('src');
- await upload('Modelo uno','#1144dd');await row('Modelo uno').locator('img.ready').waitFor();
+ await upload('Modelo uno','#1144dd','webp');await row('Modelo uno').locator('img.ready').waitFor();
  assert.equal(await row('Modelo uno').locator('[data-private-photo]').getAttribute('data-private-photo'),originalID);
  assert.notEqual(await row('Modelo uno').locator('[data-private-photo]').getAttribute('src'),originalURL);
  assert.equal(await row('Modelo dos').locator('[data-private-photo]').getAttribute('data-private-photo'),otherID);assert.equal(await row('Modelo dos').locator('[data-private-photo]').getAttribute('src'),otherURL);

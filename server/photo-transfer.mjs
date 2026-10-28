@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {PHOTO_MAX_BYTES,PHOTO_MIMES} from '../src/photo-formats.mjs';
+import {PHOTO_MAX_BYTES,PHOTO_MIMES,PHOTO_FORMATS} from '../src/photo-formats.mjs';
 import {limitedBuffer} from './textile-auth.mjs';
 
 const bucket='textile-uploads';
@@ -22,7 +22,7 @@ async function ensureBucket(c){
  if(config.public!==false||Number(config.file_size_limit)!==PHOTO_MAX_BYTES||!config.allowed_mime_types?.includes('application/octet-stream'))throw new Error('Revisa la configuración privada de la carga temporal.');
 }
 export async function preparePhotoUpload(c,body){
- if(!PHOTO_MIMES.includes(body.mime_type)||!Number.isInteger(body.size)||body.size<1||body.size>PHOTO_MAX_BYTES)throw new Error('Sube PNG, JPG/JPEG o JXL de hasta 5 MB.');
+ if(!PHOTO_MIMES.includes(body.mime_type)||!Number.isInteger(body.size)||body.size<1||body.size>PHOTO_MAX_BYTES)throw new Error('Sube '+PHOTO_FORMATS+' de hasta 5 MB.');
  await ensureBucket(c);
  const path=c.stage+'/'+c.profile.id+'/'+randomUUID();
  const response=await fetch(c.url+'/storage/v1/object/upload/sign/'+bucket+'/'+path,{method:'POST',headers:headers(c),body:'{}',signal:AbortSignal.timeout(20000)});

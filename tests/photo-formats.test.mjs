@@ -6,14 +6,14 @@ import {decodePhotoUpload} from '../server/photo-upload.mjs';
 import {preparePhotoUpload,consumePhotoUpload} from '../server/photo-transfer.mjs';
 import {uploadPhoto} from '../src/photo-transfer.mjs';
 
-test('solo admite PNG, JPG/JPEG y JXL con MIME o extensión',()=>{
- for(const [ext,mime] of Object.entries({jpg:'jpeg',jpeg:'jpeg',png:'png',jxl:'jxl'}))for(const type of ['','application/octet-stream'])assert.equal(photoMime({name:'foto.'+ext.toUpperCase(),type}),'image/'+mime);
+test('admite PNG, JPG/JPEG, JXL y WebP con MIME o extensión',()=>{
+ for(const [ext,mime] of Object.entries({jpg:'jpeg',jpeg:'jpeg',png:'png',jxl:'jxl',webp:'webp'}))for(const type of ['','application/octet-stream'])assert.equal(photoMime({name:'foto.'+ext.toUpperCase(),type}),'image/'+mime);
  assert.equal(photoMime({type:'image/jpg'}),'image/jpeg');
- for(const ext of ['gif','tiff','bmp','heic','heif','svg','avif','webp'])assert.equal(photoMime({name:'foto.'+ext,type:''}),null);
+ for(const ext of ['gif','tiff','bmp','heic','heif','svg','avif'])assert.equal(photoMime({name:'foto.'+ext,type:''}),null);
 });
 
-test('acepta hasta 5 MB exactos de PNG y JPG y rechaza un byte adicional y otros contenidos',async()=>{
- for(const format of ['png','jpeg']){
+test('acepta hasta 5 MB exactos de PNG, JPG y WebP y rechaza un byte adicional y otros contenidos',async()=>{
+ for(const format of ['png','jpeg','webp']){
   const photo=await sharp({create:{width:2,height:2,channels:3,background:'#cc2244'}})[format]().toBuffer();
   const bytes=Buffer.concat([photo,Buffer.alloc(PHOTO_MAX_BYTES-photo.length)]);
   assert.deepEqual(await decodePhotoUpload({mime_type:'image/'+format},bytes),bytes);
@@ -21,7 +21,7 @@ test('acepta hasta 5 MB exactos de PNG y JPG y rechaza un byte adicional y otros
  }
  const gif=await sharp({create:{width:2,height:2,channels:3,background:'#cc2244'}}).gif().toBuffer();
  await assert.rejects(decodePhotoUpload({mime_type:'image/png'},gif),/No se pudo leer/);
- await assert.rejects(decodePhotoUpload({mime_type:'image/gif'},gif),/PNG, JPG\/JPEG o JXL/);
+ await assert.rejects(decodePhotoUpload({mime_type:'image/gif'},gif),/PNG, JPG\/JPEG, JXL o WebP/);
  await assert.rejects(decodePhotoUpload({mime_type:'image/png',data:'!!!!'}),/incompletos/);
 });
 
