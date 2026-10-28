@@ -5,6 +5,7 @@ export const chromaticFamily=color=>chromaticFamilies.includes(color.family)?col
 export const visualColorKey=color=>normalize(color.name||color.color).replace(/\s+/g,' ').trim()+'|'+String(colorCode({provider:'ITESSA',code:color.code??color.color_code})).toUpperCase().trim();
 export function visualColorMatches(item,color,colors=[]){
  const profile=color.color_profile||{},ids=new Set([color.id,...(color.color_group||[]).map(c=>c.id)]),selected=item.source_snapshot?._textile_color_id;
+ if(item.source_snapshot?._textile_color_cleared&&!selected)return false;
  if(selected)return ids.has(selected);
  if(profile.scope==='items')return profile.bound_item_ids?.includes(item.id)||false;
  if(profile.bound_item_ids?.includes(item.id))return true;

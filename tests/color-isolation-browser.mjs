@@ -37,5 +37,8 @@ try{
  assert.equal(await page.locator('.inventory-panel tbody tr').count(),3);
  const quantities=await page.locator('.inventory-panel tbody tr').allTextContents();for(const n of [1,2,3])assert.ok(quantities.some(row=>row.includes(String(n))));
  fs.mkdirSync('data/qa',{recursive:true});await page.screenshot({path:'data/qa/color-isolation.png',fullPage:true});
+ await open('a');await page.locator('#clear-item-color').click();await page.locator('[data-record-confirm]').click();await page.locator('dialog').waitFor({state:'hidden'});
+ assert.equal(await page.locator('[data-inventory-color-items="a"]').innerText(),'Color sin registrar');
+ await open('b');assert.equal(await page.locator('[name=code]').inputValue(),'8000');await close();
  assert.deepEqual(errors,[]);console.log('PASS: tres registros con el mismo color; cambiar proveedor de A y códigos de A/B conserva C y permite editar cada registro por separado.');
 }finally{await browser.close();server.close();}

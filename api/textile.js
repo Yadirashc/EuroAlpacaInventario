@@ -1,4 +1,5 @@
 import {preparePhotoUpload,consumePhotoUpload,discardPhotoUpload} from '../server/photo-transfer.mjs';
+import {clearItemColors} from '../server/item-color-clear.mjs';
 import {decodePhotoUpload} from '../server/photo-upload.mjs';
 import {readColorProfiles,saveColorProfile,setColorReference} from '../server/color-profiles.mjs';
 import {savePhoto} from '../server/photo-storage.mjs';
@@ -11,6 +12,7 @@ import {syncDrive,syncSuppliers,configuredFeeds} from '../server/textile-sync.mj
 export default async function handler(req,res){res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');const action=req.query?.action||req.body?.action||'status';try{const c=await context(req,{admin:!['media','photo-resolve','color-profiles'].includes(action)});
 if(action==='color-profiles'&&req.method==='GET')return res.json({profiles:await readColorProfiles(c)});
 if(action==='color-profile-save'&&req.method==='POST')return res.json(await saveColorProfile(c,req.body||{}));
+if(action==='item-color-clear'&&req.method==='POST')return res.json(await clearItemColors(c,req.body||{}));
 if(action==='photo-resolve'&&req.method==='GET')return res.json(await resolveRegisteredPhoto(c,req.query||{}));
 if(action==='photo-discover'&&req.method==='POST')return res.json(await discoverPhotos(c));
 if(action==='photo-report'&&req.method==='GET')return res.json(await supplierPhotoReport(c));
