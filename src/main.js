@@ -33,7 +33,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const icon=(name)=>({overview:'◫',inventory:'▤',models:'◇',prices:'$',movements:'⇄',review:'◎',users:'♧',settings:'⚙'}[name]||'↗');
 const roles={admin:'Administradora',operadora:'Operadora',consulta:'Consulta'};
 const admin=()=>state.profile?.role==='admin';const writer=()=>admin()||state.profile?.role==='operadora';
-const active=()=>sortInventory(state.items.filter(r=>!r.archived));
+const active=()=>sortInventory(state.items.filter(r=>!r.archived&&!r.deleted_at&&!r.source_snapshot?._inventory_history_only));
 const sum=rows=>rows.filter(r=>r.location!=='Vendida').reduce((s,r)=>s+(r.quantity??0),0);
 const options=(values,selected='',empty='Todos')=>`<option value="">${empty}</option>`+[...new Set(values.filter(Boolean))].sort().map(v=>`<option ${v===selected?'selected':''} value="${esc(v)}">${esc(v)}</option>`).join('');
 const modelCover=r=>textile?.modelCover(r.model_code)||"";

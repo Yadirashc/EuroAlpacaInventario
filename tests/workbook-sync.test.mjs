@@ -7,7 +7,7 @@ test('lee ubicación, lotes combinados y cantidades sin convertir vacíos a cero
  const sheet={id:3,name:'INFO DE ENVIOS',rows:[{row:1,values:['N° PRODUCCION','UBICACIÓN','PRENDA','NOMBRE','TÍTULO','CANTIDAD']},{row:80,values:[4,'ESPAÑA','CHOMPA','KINTI','2026-02-18',2]}]};
  const [item]=workbookRows([sheet]);assert.equal(item.quantity,2);assert.equal(item.location,'España');assert.equal(item.production_lot,'4');assert.equal(item.yarn_title,'18/2');assert.equal(item.source_row,80);
  sheet.rows[1].values[5]='';assert.throws(()=>workbookRows([sheet]),/Cantidad inválida/);
- assert.equal(sourceSheets[1],'INFO PRODUCCIÓN');assert.equal(sourceColumns['INFO DE ENVIOS'][1],'UBICACIÓN');assert.equal(excelCell({...item,location:'Lima'},'UBICACIÓN'),'Lima');assert.equal(excelCell(item,'N° PRODUCCION'),'4');
+ assert.deepEqual(sourceSheets,['INFO PRODUCCIÓN','INFO DE ENVIOS']);assert.equal(sourceColumns['INFO DE ENVIOS'][1],'UBICACIÓN');assert.equal(excelCell({...item,location:'Lima'},'UBICACIÓN'),'Lima');assert.equal(excelCell(item,'N° PRODUCCION'),'4');
 });
 test('reutiliza la misma prenda trasladada y no consume una coincidencia exacta con otra talla',()=>{
  const base={name:'Kinti',category:'Chompa',material:'Baby alpaca',composition:'100% Baby Alpaca',color:'Guinda',color_code:'6330',production_state:'Terminado',size:'S',quantity:1};
