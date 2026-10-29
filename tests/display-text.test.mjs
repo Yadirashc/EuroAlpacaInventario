@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {displayText} from '../src/display-text.mjs';
+test('fibras, hilos y proveedores usan solo inicial mayúscula',()=>{for(const [input,expected]of [['MUHU','Muhu'],['BABY ALPACA','Baby alpaca'],['Royal Alpaca','Royal alpaca'],['INCA TOPS','Inca tops'],['MORADO','Morado'],['100% BABY ALPACA','100% Baby alpaca'],['  BABY  ALPACA + PET  ','Baby alpaca + pet']])assert.equal(displayText(input),expected);});
