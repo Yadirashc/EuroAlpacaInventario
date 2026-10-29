@@ -13,6 +13,7 @@ import {syncDrive,syncSuppliers,configuredFeeds} from '../server/textile-sync.mj
 export default async function handler(req,res){res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');const action=req.query?.action||req.body?.action||'status';try{const c=await context(req,{admin:!['media','photo-resolve','color-profiles'].includes(action)});
 if(action==='color-profiles'&&req.method==='GET')return res.json({profiles:await readColorProfiles(c)});
 if(action==='color-profile-save'&&req.method==='POST')return res.json(await saveColorProfile(c,req.body||{}));
+if(action==='requirement-save'&&req.method==='POST')return res.json(await c.db('rpc/save_yarn_requirement',{method:'POST',body:{p_stage:c.stage,p_id:req.body?.id,p_data:req.body?.data||{},p_expected:req.body?.expected||null}}));
 if(action==='shared-color-save'&&req.method==='POST')return res.json(await c.db('rpc/save_shared_textile_color',{method:'POST',body:{p_stage:c.stage,p_data:req.body||{}}}));
 if(action==='item-color-clear'&&req.method==='POST')return res.json(await clearItemColors(c,req.body||{}));
 if(action==='photo-resolve'&&req.method==='GET')return res.json(await resolveRegisteredPhoto(c,req.query||{}));
