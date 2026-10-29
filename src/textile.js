@@ -119,8 +119,9 @@ export function createTextileController(ctx){
  if(itemIds&&!targets.length)throw new Error('Selecciona al menos un registro.');
  const payload={...values,color_id:id||null,...(itemIds?{item_ids:targets}:{})};
  if(local()){id=saveLocalColorProfile(data,ctx.items,payload,newID).color_id;}
- else{const saved=await api('color-profile-save',payload);id=saved.color_id;if(saved.items?.length)await ctx.reload?.();}
- await load();d.close();ctx.render();ctx.toast('Color e hilo guardados sin cambiar otros colores');const row=data.colors.find(row=>row.id===id);if(wantPhoto)photoForm(null,{name:values.yarn_name+' · '+values.code,kind:'color',color_id:id,yarn_id:row.yarn_id,visibility:'team'},defaults.onSaved);else defaults.onSaved?.();});};
+ else{const saved=await api('shared-color-save',payload);id=saved.color_id;if(saved.items?.length)await ctx.reload?.();}
+ await load();defaults.onCommitted?.(id);d.close();ctx.render();ctx.toast('Color e hilo guardados sin cambiar otros colores');const row=data.colors.find(row=>row.id===id);if(wantPhoto)photoForm(null,{name:values.yarn_name+' · '+values.code,kind:'color',color_id:id,yarn_id:row.yarn_id,visibility:'team'},()=>defaults.onSaved?.(id));else defaults.onSaved?.(id);});};
+ return d;
  }
  function yarnDetail(y){
  y=groupedYarn(y);const colors=colorsForYarn(y).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{numeric:true}));
@@ -224,6 +225,12 @@ const actions={'photo-review':openPhotoReport,refresh:reload,'new-color':()=>col
   });
   return '<span class="inventory-color-images">'+images.join('')+'</span>';
  }
+ function createInventoryColor(onSaved,onCancel){
+  let saved=null,finished=false;
+  const finish=()=>{if(finished)return;finished=true;if(saved)onSaved(saved);else onCancel?.();};
+  const d=colorForm(null,{onCommitted:id=>{saved=id;},onSaved:id=>{saved=id;finish();}});
+  d?.addEventListener('close',()=>setTimeout(()=>{if(finished)return;const next=document.querySelector('#textile-photo-form')?.closest('dialog');if(saved&&next)next.addEventListener('close',finish,{once:true});else finish();},0),{once:true});
+ }
  function modelPhotoControl(item){return admin()?'<button type="button" class="secondary inventory-model-photo-action" data-inventory-model-photo="'+esc(item.model_code)+'" aria-label="Cambiar foto del modelo '+esc(item.name)+'">Cambiar foto del modelo</button>':'';}
  function editColorControl(item){return admin()?'<button type="button" class="secondary" data-edit-inventory-color="'+esc(item.id)+'">Editar color</button>':'';}
  function bindInventoryControls(){
@@ -234,5 +241,5 @@ const actions={'photo-review':openPhotoReport,refresh:reload,'new-color':()=>col
  function modelCover(code){const p=photosForModel(code)[0];return p?'<span class="model-private-cover"><img data-private-photo="'+p.id+'" alt="'+esc(p.name)+'" loading="lazy" decoding="async"></span>':'';}
  function modelPhotos(code){return photosForModel(code).map(p=>'<div class="model-photo-item">'+image(p)+'</div>').join('');}
  function destroy(){observer?.disconnect();for(const u of urls.values())URL.revokeObjectURL(u);for(const p of data.photos)if(p._url)URL.revokeObjectURL(p._url);urls.clear();loaded=false;selected=[];serverStatus=null;deletionOpen=false;deletion.reset();}
- return {load,seed,content,bind,enter,itemYarnPhoto,inventoryColorImages,inventoryLinkBar,garmentColorChoices:item=>garmentColorChoices(data,item?.id),matchesInventoryColor:(item,id)=>inventoryColorMatches(item,data).some(match=>match.color.id===id||match.color.color_group?.some(row=>row.id===id)),modelPhotos,modelCover,modelPhotoControl,editColorControl,hydrateImages,destroy,has:tab=>tabs.some(([id])=>id===tab),nav:()=>tabs,data:()=>data};
+ return {load,seed,content,bind,enter,itemYarnPhoto,inventoryColorImages,inventoryLinkBar,createInventoryColor,garmentColorChoices:item=>garmentColorChoices(data,item?.id),matchesInventoryColor:(item,id)=>inventoryColorMatches(item,data).some(match=>match.color.id===id||match.color.color_group?.some(row=>row.id===id)),modelPhotos,modelCover,modelPhotoControl,editColorControl,hydrateImages,destroy,has:tab=>tabs.some(([id])=>id===tab),nav:()=>tabs,data:()=>data};
 }
